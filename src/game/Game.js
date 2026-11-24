@@ -171,7 +171,7 @@ export class Game {
         const result = this.levelManager.purchaseWeaponUpgrade(weaponId);
         this.soundManager.playButtonClick();
         this._syncMainMenuUI();
-        if (result.success) this.gameHUD?.spawnFloatingScore('WORKSHOP UPGRADE! 🛠️', true);
+        
       },
       onButtonClick: () => this.soundManager.playButtonClick()
     });
