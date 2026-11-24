@@ -205,5 +205,6 @@ export class MainMenu {
   hide() {
     this.el.classList.add('hidden');
     this.settingsModal.classList.add('hidden');
+    this.dailyModal.classList.add('hidden');
   }
 }
