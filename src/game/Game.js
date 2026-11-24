@@ -167,6 +167,12 @@ export class Game {
         this._syncMainMenuUI();
         this.soundManager.playButtonClick();
       },
+      onPurchaseUpgrade: (weaponId) => {
+        const result = this.levelManager.purchaseWeaponUpgrade(weaponId);
+        this.soundManager.playButtonClick();
+        this._syncMainMenuUI();
+        if (result.success) this.gameHUD?.spawnFloatingScore('WORKSHOP UPGRADE! 🛠️', true);
+      },
       onButtonClick: () => this.soundManager.playButtonClick()
     });
 
@@ -388,7 +394,7 @@ export class Game {
     this.collisionHandler.setSpawnGrace(0.55);
 
     // Load level ammo & reset cannon aim
-    this.weaponManager.loadAmmo(levelConfig.ammo);
+    this.weaponManager.loadAmmo(levelConfig.ammo, this.levelManager.getWeaponUpgrades());
     this.cannon.resetAim();
 
     // Frame camera for this tower height
@@ -597,7 +603,8 @@ export class Game {
       coins: this.levelManager.getCoins(),
       dailyMissions: this.levelManager.getDailyMissions(),
       dailyDate: this.levelManager.getDailySummary().date,
-      streak: this.levelManager.getDailyStreak()
+      streak: this.levelManager.getDailyStreak(),
+      weaponUpgrades: this.levelManager.getWeaponUpgrades()
     });
   }
 
