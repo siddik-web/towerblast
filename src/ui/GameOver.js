@@ -85,7 +85,7 @@ export class GameOver {
     this.titleEl.textContent = won
       ? hasNextLevel
         ? 'TOWER BLASTED!'
-        : 'ALL 15 TOWERS CONQUERED!'
+        : 'ALL 25 TOWERS CONQUERED!'
       : 'SO CLOSE!';
 
     this.subtitleEl.textContent = `Level ${levelConfig.id} — ${levelConfig.name}`;
