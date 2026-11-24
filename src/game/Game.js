@@ -533,7 +533,7 @@ export class Game {
     const remainingAmmo = this.weaponManager.getTotalAmmo();
 
     const summary = this.scoreManager.finalizeLevel(levelCfg, ratio, remainingAmmo);
-    const { isNewBest } = this.levelManager.recordLevelWin(
+    const { isNewBest, rewards } = this.levelManager.recordLevelWin(
       levelCfg.id,
       summary.finalScore,
       summary.stars,
@@ -552,7 +552,7 @@ export class Game {
       hasNextLevel: this.levelManager.hasNextLevel(),
       isNewBest,
       ...summary,
-      rewards: this.levelManager.getLastRewards?.() || []
+      rewards
     });
   }
 
