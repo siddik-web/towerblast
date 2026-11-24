@@ -41,6 +41,34 @@ export class LevelSelector {
 
     this.gridContainer.innerHTML = '';
 
+    const milestones = levelManager.getCampaignMilestones();
+    const campaign = document.createElement('section');
+    campaign.className = 'campaign-map';
+    const campaignHeader = document.createElement('div');
+    campaignHeader.className = 'campaign-map-header';
+    campaignHeader.innerHTML = `<div><strong>CAMPAIGN MAP</strong><span>Follow the route. Beat the bosses. Claim milestone rewards.</span></div><div class="campaign-wallet">🪙 ${levelManager.getCoins().toLocaleString()}</div>`;
+    campaign.appendChild(campaignHeader);
+
+    const route = document.createElement('div');
+    route.className = 'campaign-route';
+    for (const lvl of levels) {
+      const unlocked = levelManager.isUnlocked(lvl.id);
+      const stats = levelManager.getLevelStats(lvl.id);
+      const milestone = milestones.find((item) => item.level === lvl.id);
+      const node = document.createElement('button');
+      node.className = `campaign-node ${unlocked ? 'unlocked' : 'locked'} ${stats.completed ? 'completed' : ''} ${lvl.boss ? 'boss-node' : ''} ${milestone?.claimed ? 'reward-claimed' : ''}`;
+      node.disabled = !unlocked;
+      node.innerHTML = `<span class="campaign-node-number">${unlocked ? lvl.id : '🔒'}</span><span class="campaign-node-name">${lvl.boss ? '👑 BOSS' : lvl.name}</span>${milestone ? `<span class="campaign-node-reward">${milestone.claimed ? '✓ REWARD' : `🎁 ${milestone.coins}`}</span>` : ''}`;
+      if (unlocked) node.addEventListener('click', () => this.handlers.onSelectLevel(lvl.id));
+      route.appendChild(node);
+    }
+    campaign.appendChild(route);
+    const bossLegend = document.createElement('div');
+    bossLegend.className = 'campaign-legend';
+    bossLegend.textContent = '👑 Boss encounters: Levels 15, 20 and 25 · First victory grants a unique medal and Siege Coins';
+    campaign.appendChild(bossLegend);
+    this.gridContainer.appendChild(campaign);
+
     for (const [tierName, tierLevels] of tiers.entries()) {
       const section = document.createElement('div');
       section.className = 'ls-tier-section';
@@ -66,7 +94,7 @@ export class LevelSelector {
           .join('');
 
         card.innerHTML = `
-          <div class="lc-num">${unlocked ? lvl.id : '🔒'}</div>
+          <div class="lc-num">${unlocked ? lvl.id : '🔒'} ${lvl.boss ? '👑' : ''}</div>
           <div class="lc-name">${lvl.name}</div>
           <div class="lc-stars">${starsHtml}</div>
           <div class="lc-best">${stats.bestScore > 0 ? stats.bestScore.toLocaleString() : (unlocked ? 'READY' : 'LOCKED')}</div>
