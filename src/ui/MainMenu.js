@@ -40,6 +40,7 @@ export class MainMenu {
             </button>
           </div>
           <button class="btn btn-secondary daily-missions-btn" id="mm-daily-btn">📅 DAILY MISSIONS <span id="mm-daily-count">0/3</span></button>
+          <button class="btn btn-secondary workshop-btn" id="mm-workshop-btn">🛠️ WEAPON WORKSHOP</button>
         </div>
       </div>
 
@@ -59,6 +60,17 @@ export class MainMenu {
         </div>
       </div>
 
+      <div class="modal-backdrop hidden" id="mm-workshop-modal">
+        <div class="modal-card daily-modal-card">
+          <div class="modal-header">
+            <div><h2>Weapon Workshop</h2><span class="daily-date">Upgrade your arsenal with Siege Coins</span></div>
+            <button class="icon-btn small" id="mm-workshop-close" aria-label="Close">✕</button>
+          </div>
+          <p class="daily-intro">Each tier adds 5% weapon damage and 2.5% blast force. Upgrades are permanent and capped at tier 3.</p>
+          <div class="workshop-list" id="mm-workshop-list"></div>
+          <div class="daily-wallet">🪙 Available Siege Coins: <strong id="mm-workshop-wallet">0</strong></div>
+        </div>
+      </div>
       <div class="modal-backdrop hidden" id="mm-settings-modal">
         <div class="modal-card">
           <div class="modal-header">
@@ -94,6 +106,9 @@ export class MainMenu {
     this.coinsText = this.el.querySelector('#mm-coins-text');
     this.streakText = this.el.querySelector('#mm-streak-text');
     this.dailyModal = this.el.querySelector('#mm-daily-modal');
+    this.workshopModal = this.el.querySelector('#mm-workshop-modal');
+    this.workshopList = this.el.querySelector('#mm-workshop-list');
+    this.workshopWallet = this.el.querySelector('#mm-workshop-wallet');
     this.dailyList = this.el.querySelector('#mm-daily-list');
     this.dailyDate = this.el.querySelector('#mm-daily-date');
     this.dailyCount = this.el.querySelector('#mm-daily-count');
@@ -117,6 +132,22 @@ export class MainMenu {
     });
     this.el.querySelector('#mm-levels-btn').addEventListener('click', () => {
       this.handlers.onOpenLevels();
+    });
+    this.el.querySelector('#mm-workshop-btn').addEventListener('click', () => {
+      this.workshopModal.classList.remove('hidden');
+      this.handlers.onButtonClick();
+    });
+    this.el.querySelector('#mm-workshop-close').addEventListener('click', () => {
+      this.workshopModal.classList.add('hidden');
+      this.handlers.onButtonClick();
+    });
+    this.workshopModal.addEventListener('click', (e) => {
+      if (e.target === this.workshopModal) this.workshopModal.classList.add('hidden');
+    });
+    this.workshopList.addEventListener('click', (e) => {
+      const button = e.target.closest('[data-upgrade]');
+      if (!button || button.disabled) return;
+      this.handlers.onPurchaseUpgrade(button.dataset.upgrade);
     });
     this.el.querySelector('#mm-daily-btn').addEventListener('click', () => {
       this.dailyModal.classList.remove('hidden');
@@ -173,7 +204,7 @@ export class MainMenu {
     });
   }
 
-  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '', streak = 0 }) {
+  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '', streak = 0, weaponUpgrades = {} }) {
     this.starsText.textContent = `${totalStars} / ${maxStars}`;
     this.coinsText.textContent = coins.toLocaleString();
     this.streakText.textContent = String(streak);
@@ -181,6 +212,22 @@ export class MainMenu {
     this.dailyCount.textContent = `${completed}/${dailyMissions.length}`;
     this.dailyDate.textContent = dailyDate ? `Today · ${dailyDate}` : '';
     this.dailyWallet.textContent = coins.toLocaleString();
+    this.workshopWallet.textContent = coins.toLocaleString();
+    const weapons = [
+      ['cannonball', 'Iron Ball', 'Reliable direct-hit damage'],
+      ['bomb', 'Mega Bomb', 'Heavy blast damage'],
+      ['cluster', 'Scatter Shot', 'Multi-hit damage'],
+      ['rocket', 'Power Rocket', 'Armor-piercing damage']
+    ];
+    this.workshopList.innerHTML = weapons.map(([id, name, description]) => {
+      const level = Math.max(0, Math.min(3, Number(weaponUpgrades[id]) || 0));
+      const cost = level >= 3 ? null : 100 * (level + 1);
+      const disabled = cost === null || coins < cost;
+      return `<article class="workshop-item">
+        <div class="workshop-copy"><strong>${name}</strong><span>${description}</span><small>Tier ${level}/3 · +${level * 5}% damage</small></div>
+        <button class="btn btn-secondary workshop-buy" data-upgrade="${id}" ${disabled ? 'disabled' : ''}>${cost === null ? 'MAXED' : `🪙 ${cost}`}</button>
+      </article>`;
+    }).join('');
     this.dailyList.innerHTML = dailyMissions.map((mission) => {
       const percent = Math.round((mission.progress / mission.goal) * 100);
       return `<article class="daily-mission ${mission.claimed ? 'claimed' : ''}">
@@ -209,5 +256,6 @@ export class MainMenu {
     this.el.classList.add('hidden');
     this.settingsModal.classList.add('hidden');
     this.dailyModal.classList.add('hidden');
+    this.workshopModal.classList.add('hidden');
   }
 }
