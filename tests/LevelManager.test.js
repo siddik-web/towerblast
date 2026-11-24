@@ -33,9 +33,7 @@ test('wins unlock only the next sequential level and replay does not skip progre
 
 test('daily, milestone and boss rewards are awarded once while best-score bonus is earned on mastery replay', () => {
   const manager = freshManager();
-  for (let level = 1; level <= 15; level++) {
-    manager.recordLevelWin(level, 5000, 2);
-  }
+  for (let level = 1; level <= 15; level++) manager.recordLevelWin(level, 5000, 2);
   const firstCoins = manager.getCoins();
   assert.ok(firstCoins > 0);
   const replay = manager.recordLevelWin(15, 6000, 3);
@@ -48,13 +46,10 @@ test('daily, milestone and boss rewards are awarded once while best-score bonus 
 
 test('malformed and legacy save data is normalized without crashing', () => {
   store.set('towerblast_progress_v1', JSON.stringify({
-    unlockedLevel: 999,
-    coins: 'not-a-number',
+    unlockedLevel: 999, coins: 'not-a-number',
     levelStats: { 1: { completed: true, stars: 99, bestScore: 'bad' }, 900: { stars: 3 } },
     daily: { date: new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Dhaka' }).format(new Date()) },
-    claimedCampaignRewards: ['bad', 5, 5],
-    defeatedBosses: [999],
-    settings: { shadowsEnabled: false }
+    claimedCampaignRewards: ['bad', 5, 5], defeatedBosses: [999], settings: { shadowsEnabled: false }
   }));
   const manager = new LevelManager();
   assert.equal(manager.getNextPlayableLevelId(), 2);
@@ -82,4 +77,20 @@ test('daily streak increments once per Dhaka date and achievements pay once', ()
   assert.ok(replay.rewards.some((reward) => reward.label === 'Personal Best Bonus'));
   assert.equal(replay.rewards.filter((reward) => reward.label === 'Combo Master').length, 0);
   assert.equal(manager.getDailyStreak(), 1);
+});
+
+test('weapon workshop upgrades spend coins, cap at tier three and persist', () => {
+  store.clear();
+  store.set('towerblast_progress_v1', JSON.stringify({ coins: 1000 }));
+  const manager = new LevelManager();
+  const first = manager.purchaseWeaponUpgrade('cannonball');
+  assert.equal(first.success, true);
+  assert.equal(first.level, 1);
+  assert.equal(manager.getCoins(), 900);
+  assert.equal(manager.getWeaponUpgrades().cannonball, 1);
+  assert.equal(manager.purchaseWeaponUpgrade('cannonball').level, 2);
+  assert.equal(manager.purchaseWeaponUpgrade('cannonball').level, 3);
+  assert.equal(manager.purchaseWeaponUpgrade('cannonball').reason, 'max-level');
+  const restored = new LevelManager();
+  assert.equal(restored.getWeaponUpgrades().cannonball, 3);
 });
