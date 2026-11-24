@@ -12,6 +12,7 @@ export class MainMenu {
           <span id="mm-stars-text">0 / 75</span>
         </div>
         <div class="pill coins-pill">🪙 <span id="mm-coins-text">0</span></div>
+        <div class="pill streak-pill" title="Consecutive days played">🔥 <span id="mm-streak-text">0</span></div>
         <button class="icon-btn" id="mm-sound-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
       </div>
 
@@ -91,6 +92,7 @@ export class MainMenu {
 
     this.starsText = this.el.querySelector('#mm-stars-text');
     this.coinsText = this.el.querySelector('#mm-coins-text');
+    this.streakText = this.el.querySelector('#mm-streak-text');
     this.dailyModal = this.el.querySelector('#mm-daily-modal');
     this.dailyList = this.el.querySelector('#mm-daily-list');
     this.dailyDate = this.el.querySelector('#mm-daily-date');
@@ -171,9 +173,10 @@ export class MainMenu {
     });
   }
 
-  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '' }) {
+  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '', streak = 0 }) {
     this.starsText.textContent = `${totalStars} / ${maxStars}`;
     this.coinsText.textContent = coins.toLocaleString();
+    this.streakText.textContent = String(streak);
     const completed = dailyMissions.filter((mission) => mission.claimed).length;
     this.dailyCount.textContent = `${completed}/${dailyMissions.length}`;
     this.dailyDate.textContent = dailyDate ? `Today · ${dailyDate}` : '';
