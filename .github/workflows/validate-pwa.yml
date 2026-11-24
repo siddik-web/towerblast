@@ -1,0 +1,36 @@
+name: Validate Tower Blast PWA
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - '.github/workflows/validate-pwa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-check-pwa:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Verify PWA build output
+        run: |
+          test -s dist/index.html
+          test -s dist/manifest.webmanifest
+          test -s dist/sw.js
+          test -s dist/icons/towerblast.svg
+          grep -q 'manifest.webmanifest' dist/index.html
+          grep -q 'serviceWorker' dist/assets/*.js
