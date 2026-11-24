@@ -533,30 +533,33 @@ function buildChallengeTower(spec) {
     const floors = spec.floors + (i === Math.floor(xs.length / 2) ? 1 : 0);
     for (let f = 0; f < floors; f++) {
       const material = mats[(i + f * 2) % mats.length];
+      // Keep every pylon inside its own collision footprint. The old 1.8-unit
+      // spans placed adjacent corner pillars and roof slabs inside one another.
       ty = b.addStory({
         y: ty,
         offsetX: xs[i],
-        spanX: Math.max(0.95, 1.8 - f * 0.12),
-        spanZ: 1.25,
+        spanX: 0.82,
+        spanZ: 0.9,
         pillarH: 1.35 + (f % 2) * 0.18,
-        pillarW: material === 'steel' ? 0.62 : 0.52,
-        pillarD: material === 'steel' ? 0.62 : 0.52,
+        pillarW: 0.28,
+        pillarD: 0.28,
         pillarMat: material,
-        slabH: material === 'steel' || material === 'concrete' ? 0.48 : 0.38,
+        slabH: material === 'steel' || material === 'concrete' ? 0.42 : 0.36,
         slabMat: mats[(i + f + 1) % mats.length],
-        centerMat: (f === spec.coreFloor && (i === 0 || i === xs.length - 1 || i === Math.floor(xs.length / 2))) ? 'explosive' : null
+        centerMat: (f === spec.coreFloor && (i === 0 || i === xs.length - 1 || i === Math.floor(xs.length / 2))) ? 'explosive' : null,
+        roofOverhang: 0.08
       });
     }
     b.addCrown(ty, xs[i], 0, mats[(i + 1) % mats.length], 0.85);
     y = Math.max(y, ty);
   }
 
-  // Suspended cross-beams force players to use blast direction and chain reactions.
-  if (spec.bridge) {
-    b.add(0, y * 0.48, 0, xs[xs.length - 1] - xs[0] + 1.1, 0.42, 1.0, spec.bridge);
-  }
+  // Do not span a single rigid body through the pylon collision volumes:
+  // that made the bridge start interpenetrating several towers at once.
+  // The challenge's separated pylons remain linked by their visual layout and
+  // can still be brought down by projectile and explosion forces.
   if (spec.shield) {
-    b.add(0, 0, 1.95, 1.0, 2.2, 0.48, spec.shield);
+    b.add(0, 0, 2.25, 0.9, 1.8, 0.32, spec.shield);
   }
   // A low central charge rewards precision rather than indiscriminate top hits.
   if (spec.centralCharge) {
