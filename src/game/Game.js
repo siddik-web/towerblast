@@ -550,6 +550,7 @@ export class Game {
       won: true,
       levelConfig: levelCfg,
       hasNextLevel: this.levelManager.hasNextLevel(),
+      nextLevelId: this.levelManager.getNextPlayableLevelId(),
       isNewBest,
       ...summary,
       rewards
