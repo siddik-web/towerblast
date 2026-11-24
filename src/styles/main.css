@@ -1211,3 +1211,246 @@ body {
     font-size: 0.74rem;
   }
 }
+
+
+/* ==================== DAILY MISSIONS & CAMPAIGN REWARDS ==================== */
+.coins-pill {
+  color: #fde68a;
+  border-color: rgba(251, 191, 36, 0.38);
+}
+.daily-missions-btn {
+  min-width: 245px;
+  justify-content: space-between;
+  border-color: rgba(34, 211, 238, 0.42);
+}
+.daily-missions-btn span {
+  color: #fde68a;
+  font-size: 0.82rem;
+}
+.daily-modal-card {
+  width: min(520px, 94vw);
+  max-height: min(82vh, 720px);
+  overflow-y: auto;
+}
+.daily-date {
+  display: block;
+  margin-top: 3px;
+  color: var(--accent-cyan);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.daily-intro {
+  margin: 0 0 16px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+.daily-mission-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.daily-mission {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,.055);
+}
+.daily-mission.claimed {
+  border-color: rgba(34,197,94,.42);
+  background: rgba(34,197,94,.08);
+}
+.daily-mission-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.08);
+  font-size: 1.35rem;
+}
+.daily-mission-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.daily-mission-copy strong {
+  font-family: var(--font-display);
+  font-size: .98rem;
+}
+.daily-mission-copy span,
+.daily-mission-copy small {
+  color: var(--text-muted);
+  font-size: .76rem;
+}
+.daily-progress {
+  height: 7px;
+  margin-top: 5px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: rgba(255,255,255,.12);
+}
+.daily-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #22d3ee, #22c55e);
+}
+.daily-reward {
+  color: #fde68a;
+  font-size: .72rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.daily-wallet {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(251,191,36,.1);
+  color: #fde68a;
+  text-align: center;
+  font-weight: 800;
+}
+.daily-wallet strong {
+  margin-left: 5px;
+  color: #fff;
+}
+
+/* The campaign route is a tappable progression map with milestone chests. */
+.campaign-map {
+  padding: 16px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: linear-gradient(145deg, rgba(30,58,95,.9), rgba(15,23,42,.94));
+}
+.campaign-map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.campaign-map-header > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.campaign-map-header strong {
+  font-family: var(--font-display);
+  letter-spacing: 1px;
+}
+.campaign-map-header span {
+  color: var(--text-muted);
+  font-size: .78rem;
+}
+.campaign-wallet {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #fde68a;
+  background: rgba(251,191,36,.12);
+  font-weight: 900;
+}
+.campaign-route {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.campaign-node {
+  min-width: 0;
+  min-height: 76px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 14px;
+  background: rgba(255,255,255,.07);
+  cursor: pointer;
+}
+.campaign-node.unlocked {
+  border-color: rgba(34,211,238,.48);
+}
+.campaign-node.completed {
+  background: rgba(34,197,94,.13);
+  border-color: rgba(34,197,94,.6);
+}
+.campaign-node.boss-node {
+  border: 2px solid rgba(251,191,36,.72);
+  background: linear-gradient(150deg, rgba(120,53,15,.55), rgba(30,41,59,.9));
+}
+.campaign-node.locked {
+  opacity: .48;
+  cursor: not-allowed;
+}
+.campaign-node-number {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+.campaign-node-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: .62rem;
+  font-weight: 800;
+}
+.campaign-node-reward {
+  color: #fde68a;
+  font-size: .58rem;
+  font-weight: 900;
+}
+.campaign-legend {
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: .74rem;
+  line-height: 1.4;
+}
+.go-rewards {
+  margin: 0 auto 12px;
+  padding: 9px 12px;
+  border: 1px solid rgba(251,191,36,.48);
+  border-radius: 14px;
+  background: rgba(251,191,36,.1);
+  color: #fde68a;
+  font-size: .82rem;
+  font-weight: 900;
+  line-height: 1.4;
+}
+@media (max-width: 680px) {
+  .menu-topbar {
+    gap: 7px;
+  }
+  .menu-topbar .pill {
+    padding: 7px 10px;
+    font-size: .82rem;
+  }
+  .daily-missions-btn {
+    min-width: 220px;
+  }
+  .campaign-map {
+    padding: 12px 9px;
+  }
+  .campaign-route {
+    gap: 6px;
+  }
+  .campaign-node {
+    min-height: 68px;
+    border-radius: 11px;
+  }
+  .campaign-node-name {
+    font-size: .54rem;
+  }
+  .campaign-node-reward {
+    font-size: .5rem;
+  }
+}

@@ -533,12 +533,14 @@ export class Game {
     const remainingAmmo = this.weaponManager.getTotalAmmo();
 
     const summary = this.scoreManager.finalizeLevel(levelCfg, ratio, remainingAmmo);
-    const { isNewBest } = this.levelManager.recordLevelWin(
+    const { isNewBest, rewards } = this.levelManager.recordLevelWin(
       levelCfg.id,
       summary.finalScore,
-      summary.stars
+      summary.stars,
+      summary
     );
 
+    this._syncMainMenuUI();
     this.gameHUD.updateScore(summary.finalScore);
     this.gameHUD.updateProgress(ratio, levelCfg.targetDestruction);
     this.soundManager.playLevelComplete();
@@ -549,7 +551,8 @@ export class Game {
       levelConfig: levelCfg,
       hasNextLevel: this.levelManager.hasNextLevel(),
       isNewBest,
-      ...summary
+      ...summary,
+      rewards
     });
   }
 
@@ -589,7 +592,10 @@ export class Game {
       muted: this.soundManager.muted,
       sfxEnabled: this.soundManager.sfxEnabled,
       musicEnabled: this.soundManager.musicEnabled,
-      shadowsEnabled: this.levelManager.getShadowsEnabled()
+      shadowsEnabled: this.levelManager.getShadowsEnabled(),
+      coins: this.levelManager.getCoins(),
+      dailyMissions: this.levelManager.getDailyMissions(),
+      dailyDate: this.levelManager.getDailySummary().date
     });
   }
 

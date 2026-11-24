@@ -570,12 +570,12 @@ const ADVANCED_CHALLENGES = [
   { name: 'TNT Switchyard', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'sunset', description: 'CHAIN REACTION: Trigger the outer charges to collapse the bridge into the center tower.', columns: 5, floors: 3, materials: ['wood','stone','glass'], coreFloor: 0, bridge: 'wood', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .90, stars: [5200,7300,9400] },
   { name: 'Concrete Crossfire', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'twilight', description: 'ARMORED: A narrow firing lane protects the weak rear supports. Use a high arc.', columns: 4, floors: 4, materials: ['concrete','steel','glass'], coreFloor: 1, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 1, rocket: 1 }, target: .90, stars: [5800,8200,10800] },
   { name: 'Domino Deadline', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'golden', description: 'DOMINO: Tip the left pylon first. The bridge must take down every tower.', columns: 5, floors: 3, materials: ['wood','glass','stone'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 2, bomb: 0, cluster: 1, rocket: 0 }, target: .92, stars: [5400,7600,9800] },
-  { name: 'Steel Heart', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'twilight', description: 'WEAK POINT: Steel armor surrounds a single explosive core. Save the rocket for the core.', columns: 3, floors: 5, materials: ['steel','concrete','glass'], coreFloor: 2, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 0, rocket: 1 }, target: .90, stars: [6500,9000,11800] },
+  { name: 'Steel Heart', boss: { name: 'The Iron Warden', rewardCoins: 250, rewardTitle: 'Iron Warden Crest' }, tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'twilight', description: 'WEAK POINT: Steel armor surrounds a single explosive core. Save the rocket for the core.', columns: 3, floors: 5, materials: ['steel','concrete','glass'], coreFloor: 2, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 0, rocket: 1 }, target: .90, stars: [6500,9000,11800] },
   { name: 'Twin Reactor', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'sunset', description: 'TWIN CHARGES: Detonate both outer cores with one carefully placed blast.', columns: 4, floors: 4, materials: ['stone','glass','concrete'], coreFloor: 1, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .91, stars: [6800,9400,12200] },
   { name: 'The Last Bastion', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'twilight', description: 'EXPERT: Four shots. Maximize collapse damage; every missed shot matters.', columns: 5, floors: 4, materials: ['steel','stone','concrete','glass'], coreFloor: 0, bridge: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .92, stars: [8200,11200,14500] },
   { name: 'Suspended Ruin', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'golden', description: 'SUSPENDED: Destroy the supports, not the upper bridge. Let gravity do the work.', columns: 3, floors: 5, materials: ['glass','concrete','wood'], coreFloor: 0, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .93, stars: [7600,10400,13600] },
   { name: 'Fortress of Echoes', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'alpine', description: 'RICOCHET PLAN: Break the front shield, then chain the rear explosive supports.', columns: 4, floors: 5, materials: ['stone','steel','glass'], coreFloor: 1, shield: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .92, stars: [9000,12400,15800] },
-  { name: 'Worldbreaker', tier: 'Final Trials', tierIndex: 9, skyTheme: 'twilight', description: 'FINAL TRIAL: A multi-pylon fortress. Plan every shot and earn a 3-star demolition.', columns: 5, floors: 5, materials: ['steel','concrete','stone','glass'], coreFloor: 2, bridge: 'steel', shield: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 }, target: .93, stars: [11000,14800,19000] }
+  { name: 'Worldbreaker', boss: { name: 'Worldbreaker Prime', rewardCoins: 500, rewardTitle: 'Worldbreaker Trophy' }, tier: 'Final Trials', tierIndex: 9, skyTheme: 'twilight', description: 'FINAL TRIAL: A multi-pylon fortress. Plan every shot and earn a 3-star demolition.', columns: 5, floors: 5, materials: ['steel','concrete','stone','glass'], coreFloor: 2, bridge: 'steel', shield: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 }, target: .93, stars: [11000,14800,19000] }
 ];
 
 function buildAdvancedLevels() {
@@ -586,6 +586,7 @@ function buildAdvancedLevels() {
     tierIndex: spec.tierIndex,
     skyTheme: spec.skyTheme,
     description: spec.description,
+    boss: spec.boss || null,
     targetDestruction: spec.target,
     ammo: spec.ammo,
     starThresholds: spec.stars,
@@ -765,6 +766,7 @@ export const LEVELS = [
   {
     id: 15,
     name: "Emperor's Citadel",
+    boss: { name: 'The Emperor', rewardCoins: 150, rewardTitle: 'Emperor Slayer Medal' },
     tier: 'Reinforced Fortresses',
     tierIndex: 5,
     skyTheme: 'twilight',

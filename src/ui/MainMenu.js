@@ -11,6 +11,7 @@ export class MainMenu {
           <span class="star-icon">★</span>
           <span id="mm-stars-text">0 / 75</span>
         </div>
+        <div class="pill coins-pill">🪙 <span id="mm-coins-text">0</span></div>
         <button class="icon-btn" id="mm-sound-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
       </div>
 
@@ -37,11 +38,24 @@ export class MainMenu {
               <span class="btn-icon">⚙</span> SETTINGS
             </button>
           </div>
+          <button class="btn btn-secondary daily-missions-btn" id="mm-daily-btn">📅 DAILY MISSIONS <span id="mm-daily-count">0/3</span></button>
         </div>
       </div>
 
       <div class="menu-footer">
         Drag to aim • Click or tap to blast • 25 Hand-Crafted Towers
+      </div>
+
+      <div class="modal-backdrop hidden" id="mm-daily-modal">
+        <div class="modal-card daily-modal-card">
+          <div class="modal-header">
+            <div><h2>Daily Missions</h2><span class="daily-date" id="mm-daily-date"></span></div>
+            <button class="icon-btn small" id="mm-daily-close" aria-label="Close">✕</button>
+          </div>
+          <p class="daily-intro">Complete today's objectives to earn Siege Coins. Progress resets at midnight Dhaka time.</p>
+          <div class="daily-mission-list" id="mm-daily-list"></div>
+          <div class="daily-wallet">🪙 Your Siege Coins: <strong id="mm-daily-wallet">0</strong></div>
+        </div>
       </div>
 
       <div class="modal-backdrop hidden" id="mm-settings-modal">
@@ -76,6 +90,12 @@ export class MainMenu {
     this.rootEl.appendChild(this.el);
 
     this.starsText = this.el.querySelector('#mm-stars-text');
+    this.coinsText = this.el.querySelector('#mm-coins-text');
+    this.dailyModal = this.el.querySelector('#mm-daily-modal');
+    this.dailyList = this.el.querySelector('#mm-daily-list');
+    this.dailyDate = this.el.querySelector('#mm-daily-date');
+    this.dailyCount = this.el.querySelector('#mm-daily-count');
+    this.dailyWallet = this.el.querySelector('#mm-daily-wallet');
     this.playLabel = this.el.querySelector('#mm-play-label');
     this.soundBtn = this.el.querySelector('#mm-sound-btn');
     this.settingsModal = this.el.querySelector('#mm-settings-modal');
@@ -96,6 +116,17 @@ export class MainMenu {
     this.el.querySelector('#mm-levels-btn').addEventListener('click', () => {
       this.handlers.onOpenLevels();
     });
+    this.el.querySelector('#mm-daily-btn').addEventListener('click', () => {
+      this.dailyModal.classList.remove('hidden');
+      this.handlers.onButtonClick();
+    });
+    this.el.querySelector('#mm-daily-close').addEventListener('click', () => {
+      this.dailyModal.classList.add('hidden');
+      this.handlers.onButtonClick();
+    });
+    this.dailyModal.addEventListener('click', (e) => {
+      if (e.target === this.dailyModal) this.dailyModal.classList.add('hidden');
+    });
     this.el.querySelector('#mm-settings-btn').addEventListener('click', () => {
       this._resetArmed = false;
       this.resetConfirm.classList.add('hidden');
@@ -104,6 +135,7 @@ export class MainMenu {
     });
     this.el.querySelector('#mm-settings-close').addEventListener('click', () => {
       this.settingsModal.classList.add('hidden');
+    this.dailyModal.classList.add('hidden');
       this.handlers.onButtonClick();
     });
     this.settingsModal.addEventListener('click', (e) => {
@@ -139,8 +171,26 @@ export class MainMenu {
     });
   }
 
-  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled }) {
+  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '' }) {
     this.starsText.textContent = `${totalStars} / ${maxStars}`;
+    this.coinsText.textContent = coins.toLocaleString();
+    const completed = dailyMissions.filter((mission) => mission.claimed).length;
+    this.dailyCount.textContent = `${completed}/${dailyMissions.length}`;
+    this.dailyDate.textContent = dailyDate ? `Today · ${dailyDate}` : '';
+    this.dailyWallet.textContent = coins.toLocaleString();
+    this.dailyList.innerHTML = dailyMissions.map((mission) => {
+      const percent = Math.round((mission.progress / mission.goal) * 100);
+      return `<article class="daily-mission ${mission.claimed ? 'claimed' : ''}">
+        <div class="daily-mission-icon">${mission.icon}</div>
+        <div class="daily-mission-copy">
+          <strong>${mission.title}</strong>
+          <span>${mission.description}</span>
+          <div class="daily-progress"><i style="width:${percent}%"></i></div>
+          <small>${mission.progress.toLocaleString()} / ${mission.goal.toLocaleString()}</small>
+        </div>
+        <div class="daily-reward">${mission.claimed ? '✓ CLAIMED' : `🪙 ${mission.reward}`}</div>
+      </article>`;
+    }).join('');
     this.playLabel.textContent = nextLevelId > 1 ? `CONTINUE LVL ${nextLevelId}` : 'PLAY NOW';
     this.soundBtn.textContent = muted ? '🔇' : '🔊';
     this.sfxToggle.checked = sfxEnabled;
@@ -155,5 +205,6 @@ export class MainMenu {
   hide() {
     this.el.classList.add('hidden');
     this.settingsModal.classList.add('hidden');
+    this.dailyModal.classList.add('hidden');
   }
 }
