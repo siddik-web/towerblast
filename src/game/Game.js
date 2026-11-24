@@ -592,7 +592,10 @@ export class Game {
       muted: this.soundManager.muted,
       sfxEnabled: this.soundManager.sfxEnabled,
       musicEnabled: this.soundManager.musicEnabled,
-      shadowsEnabled: this.levelManager.getShadowsEnabled()
+      shadowsEnabled: this.levelManager.getShadowsEnabled(),
+      coins: this.levelManager.getCoins(),
+      dailyMissions: this.levelManager.getDailyMissions(),
+      dailyDate: this.levelManager.getDailySummary().date
     });
   }
 
