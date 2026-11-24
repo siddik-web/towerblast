@@ -68,3 +68,16 @@ test('invalid level selection is clamped to unlocked progression', () => {
   manager.recordLevelWin(1, 1000, 1);
   assert.equal(manager.setCurrentLevel(25).id, 2);
 });
+
+
+test('daily streak increments once per Dhaka date and achievements pay once', () => {
+  const manager = freshManager();
+  const first = manager.recordLevelWin(1, 5000, 3, { maxCombo: 5 });
+  assert.ok(first.rewards.some((reward) => reward.label === 'First Demolition'));
+  assert.ok(first.rewards.some((reward) => reward.label === 'Combo Master'));
+  assert.equal(manager.getDailyStreak(), 1);
+  const replay = manager.recordLevelWin(1, 5100, 3, { maxCombo: 5 });
+  assert.ok(replay.rewards.some((reward) => reward.label === 'Personal Best Bonus'));
+  assert.equal(replay.rewards.filter((reward) => reward.label === 'Combo Master').length, 0);
+  assert.equal(manager.getDailyStreak(), 1);
+});
