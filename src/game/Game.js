@@ -536,9 +536,11 @@ export class Game {
     const { isNewBest } = this.levelManager.recordLevelWin(
       levelCfg.id,
       summary.finalScore,
-      summary.stars
+      summary.stars,
+      summary
     );
 
+    this._syncMainMenuUI();
     this.gameHUD.updateScore(summary.finalScore);
     this.gameHUD.updateProgress(ratio, levelCfg.targetDestruction);
     this.soundManager.playLevelComplete();
@@ -549,7 +551,8 @@ export class Game {
       levelConfig: levelCfg,
       hasNextLevel: this.levelManager.hasNextLevel(),
       isNewBest,
-      ...summary
+      ...summary,
+      rewards: this.levelManager.getLastRewards?.() || []
     });
   }
 
