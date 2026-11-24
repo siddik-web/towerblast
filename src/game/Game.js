@@ -224,7 +224,7 @@ export class Game {
       onNextLevel: () => {
         this.soundManager.playButtonClick();
         if (this.levelManager.hasNextLevel()) {
-          this.startLevel(this.levelManager.currentLevelId + 1);
+          this.startLevel(this.levelManager.getNextPlayableLevelId());
         } else {
           this.openLevelSelect();
         }
@@ -550,6 +550,7 @@ export class Game {
       won: true,
       levelConfig: levelCfg,
       hasNextLevel: this.levelManager.hasNextLevel(),
+      nextLevelId: this.levelManager.getNextPlayableLevelId(),
       isNewBest,
       ...summary,
       rewards
@@ -675,7 +676,15 @@ export class Game {
     };
 
     this.canvas.addEventListener('pointerup', handlePointerEnd);
-    this.canvas.addEventListener('pointercancel', handlePointerEnd);
+    this.canvas.addEventListener('pointercancel', (e) => {
+      if (!this.pointer.active || e.pointerId !== this.pointer.pointerId) return;
+      this.pointer.active = false;
+      this.pointer.pointerId = null;
+      this.pointer.dragged = false;
+      if (this.stateMachine.is(GameState.AIMING)) {
+        this.stateMachine.setState(GameState.READY);
+      }
+    });
 
     // Prevent accidental scroll/pinch gestures on mobile canvas
     this.canvas.addEventListener(

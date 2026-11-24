@@ -10,16 +10,18 @@ const CAMPAIGN_REWARDS = [
 ];
 
 function getDhakaDateKey() {
-  return new Intl.DateTimeFormat('en-CA', {
+  const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Asia/Dhaka',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
-  }).format(new Date());
+  }).formatToParts(new Date());
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 function createDailyState(date = getDhakaDateKey()) {
-  return { date, levelsCleared: 0, starsEarned: 0, bestScore: 0, claimed: [] };
+  return { date, levelsCleared: 0, bestScore: 0, bestStars: 0, claimed: [] };
 }
 
 const DAILY_MISSIONS = [
@@ -27,6 +29,12 @@ const DAILY_MISSIONS = [
   { id: 'daily-score', title: 'Score Chaser', description: 'Score 4,500 or more in one run', metric: 'bestScore', goal: 4500, reward: 75, icon: '🎯' },
   { id: 'daily-stars', title: 'Star Collector', description: 'Earn 2 or more stars in one run', metric: 'bestStars', goal: 2, reward: 100, icon: '⭐' }
 ];
+
+const isRecord = (value) => value !== null && typeof value === 'object' && !Array.isArray(value);
+const finiteNumber = (value, fallback = 0) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+};
 
 export class LevelManager {
   constructor() {
@@ -50,17 +58,55 @@ export class LevelManager {
 
   _loadProgress() {
     try {
-      const raw = localStorage.getItem(PROGRESS_KEY);
+      const raw = globalThis.localStorage?.getItem(PROGRESS_KEY);
       if (!raw) return this._defaultProgress();
       const parsed = JSON.parse(raw);
+      if (!isRecord(parsed)) return this._defaultProgress();
+
+      const levelStats = {};
+      if (isRecord(parsed.levelStats)) {
+        for (const level of this.levels) {
+          const stat = parsed.levelStats[level.id];
+          if (!isRecord(stat)) continue;
+          levelStats[level.id] = {
+            completed: Boolean(stat.completed),
+            stars: Math.max(0, Math.min(3, Math.floor(finiteNumber(stat.stars)))),
+            bestScore: Math.max(0, finiteNumber(stat.bestScore))
+          };
+        }
+      }
+
+      const daily = isRecord(parsed.daily) ? parsed.daily : {};
+      const today = getDhakaDateKey();
+      const normalizedDaily = daily.date === today
+        ? {
+            date: today,
+            levelsCleared: Math.max(0, Math.floor(finiteNumber(daily.levelsCleared))),
+            bestScore: Math.max(0, finiteNumber(daily.bestScore)),
+            bestStars: Math.max(0, Math.min(3, Math.floor(finiteNumber(daily.bestStars)))),
+            claimed: Array.isArray(daily.claimed)
+              ? [...new Set(daily.claimed.filter((id) => DAILY_MISSIONS.some((mission) => mission.id === id)))]
+              : []
+          }
+        : createDailyState(today);
+
+      const highestCompleted = Math.max(1, ...Object.entries(levelStats)
+        .filter(([, stat]) => stat.completed)
+        .map(([id]) => Number(id) + 1));
+      const storedUnlocked = Math.floor(finiteNumber(parsed.unlockedLevel, 1));
+
       return {
-        unlockedLevel: Math.max(1, Math.min(this.levels.length, parsed.unlockedLevel || 1)),
-        levelStats: parsed.levelStats || {},
-        coins: Math.max(0, Number(parsed.coins) || 0),
-        claimedCampaignRewards: Array.isArray(parsed.claimedCampaignRewards) ? parsed.claimedCampaignRewards : [],
-        defeatedBosses: Array.isArray(parsed.defeatedBosses) ? parsed.defeatedBosses : [],
-        daily: parsed.daily || createDailyState(),
-        settings: { shadowsEnabled: parsed.settings?.shadowsEnabled ?? true }
+        unlockedLevel: Math.max(1, Math.min(this.levels.length, storedUnlocked, highestCompleted)),
+        levelStats,
+        coins: Math.max(0, Math.floor(finiteNumber(parsed.coins))),
+        claimedCampaignRewards: Array.isArray(parsed.claimedCampaignRewards)
+          ? [...new Set(parsed.claimedCampaignRewards.filter((id) => CAMPAIGN_REWARDS.some((item) => item.level === id)))]
+          : [],
+        defeatedBosses: Array.isArray(parsed.defeatedBosses)
+          ? [...new Set(parsed.defeatedBosses.filter((id) => this.levels.some((level) => level.id === id && level.boss)))]
+          : [],
+        daily: normalizedDaily,
+        settings: { shadowsEnabled: typeof parsed.settings?.shadowsEnabled === 'boolean' ? parsed.settings.shadowsEnabled : true }
       };
     } catch {
       return this._defaultProgress();
@@ -77,9 +123,9 @@ export class LevelManager {
 
   _saveProgress() {
     try {
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(this.progress));
+      globalThis.localStorage?.setItem(PROGRESS_KEY, JSON.stringify(this.progress));
     } catch {
-      // Ignore storage quota errors without interrupting a game session.
+      // Storage may be unavailable or full; keep the current session playable.
     }
   }
 
@@ -89,36 +135,37 @@ export class LevelManager {
   getCurrentLevel() { return this.getLevel(this.currentLevelId); }
 
   setCurrentLevel(id) {
-    this.currentLevelId = Math.max(1, Math.min(this.levels.length, id));
+    const requested = Math.floor(finiteNumber(id, 1));
+    this.currentLevelId = Math.max(1, Math.min(this.progress.unlockedLevel, this.levels.length, requested));
     return this.getCurrentLevel();
   }
 
   getNextPlayableLevelId() { return Math.min(this.levels.length, this.progress.unlockedLevel); }
   hasNextLevel() { return this.currentLevelId < this.levels.length; }
-  isUnlocked(levelId) { return levelId <= this.progress.unlockedLevel; }
+  isUnlocked(levelId) {
+    const id = Number(levelId);
+    return Number.isInteger(id) && id >= 1 && id <= this.progress.unlockedLevel;
+  }
 
   getLevelStats(levelId) {
     return this.progress.levelStats[levelId] || { stars: 0, bestScore: 0, completed: false };
   }
 
   getTotalStars() {
-    return Object.values(this.progress.levelStats).reduce((total, stat) => total + (stat.stars || 0), 0);
+    return Object.values(this.progress.levelStats).reduce((total, stat) => total + stat.stars, 0);
   }
 
   getMaxStars() { return this.levels.length * 3; }
-  getCoins() { return this.progress.coins || 0; }
+  getCoins() { return this.progress.coins; }
 
   getDailyMissions() {
     this._refreshDailyState();
     return DAILY_MISSIONS.map((mission) => {
-      const value = mission.metric === 'bestStars'
-        ? (this.progress.daily.bestStars || 0)
-        : (this.progress.daily[mission.metric] || 0);
-      const completed = value >= mission.goal;
+      const value = this.progress.daily[mission.metric] || 0;
       return {
         ...mission,
         progress: Math.min(value, mission.goal),
-        completed,
+        completed: value >= mission.goal,
         claimed: this.progress.daily.claimed.includes(mission.id)
       };
     });
@@ -154,35 +201,42 @@ export class LevelManager {
     return rewards;
   }
 
-  recordLevelWin(levelId, score, stars, summary = {}) {
+  recordLevelWin(levelId, score, stars) {
+    const id = Number(levelId);
+    const level = this.levels.find((item) => item.id === id);
+    if (!level || !this.isUnlocked(id)) {
+      throw new RangeError('Cannot record a win for an unknown or locked level.');
+    }
+
+    const safeScore = Math.max(0, finiteNumber(score));
+    const safeStars = Math.max(1, Math.min(3, Math.floor(finiteNumber(stars, 1))));
     this._refreshDailyState();
-    const existing = this.getLevelStats(levelId);
-    const isNewBest = score > (existing.bestScore || 0);
-    this.progress.levelStats[levelId] = {
+    const existing = this.getLevelStats(id);
+    const isNewBest = safeScore > existing.bestScore;
+    this.progress.levelStats[id] = {
       completed: true,
-      stars: Math.max(existing.stars || 0, stars),
-      bestScore: Math.max(existing.bestScore || 0, score)
+      stars: Math.max(existing.stars, safeStars),
+      bestScore: Math.max(existing.bestScore, safeScore)
     };
 
-    if (levelId >= this.progress.unlockedLevel && levelId < this.levels.length) {
-      this.progress.unlockedLevel = levelId + 1;
+    if (id === this.progress.unlockedLevel && id < this.levels.length) {
+      this.progress.unlockedLevel = id + 1;
     }
 
     const rewards = [];
     this.progress.daily.levelsCleared += 1;
-    this.progress.daily.bestScore = Math.max(this.progress.daily.bestScore || 0, score);
-    this.progress.daily.bestStars = Math.max(this.progress.daily.bestStars || 0, stars);
+    this.progress.daily.bestScore = Math.max(this.progress.daily.bestScore, safeScore);
+    this.progress.daily.bestStars = Math.max(this.progress.daily.bestStars, safeStars);
 
-    const level = this.getLevel(levelId);
-    if (level.boss && !this.progress.defeatedBosses.includes(levelId)) {
-      this.progress.defeatedBosses.push(levelId);
+    if (level.boss && !this.progress.defeatedBosses.includes(id)) {
+      this.progress.defeatedBosses.push(id);
       this.progress.coins += level.boss.rewardCoins;
       rewards.push({ label: level.boss.rewardTitle, coins: level.boss.rewardCoins });
     }
 
-    const milestone = CAMPAIGN_REWARDS.find((item) => item.level === levelId);
-    if (milestone && !this.progress.claimedCampaignRewards.includes(levelId)) {
-      this.progress.claimedCampaignRewards.push(levelId);
+    const milestone = CAMPAIGN_REWARDS.find((item) => item.level === id);
+    if (milestone && !this.progress.claimedCampaignRewards.includes(id)) {
+      this.progress.claimedCampaignRewards.push(id);
       this.progress.coins += milestone.coins;
       rewards.push({ label: milestone.title, coins: milestone.coins });
     }
@@ -191,7 +245,7 @@ export class LevelManager {
     this._saveProgress();
     return {
       isNewBest,
-      bestScore: this.progress.levelStats[levelId].bestScore,
+      bestScore: this.progress.levelStats[id].bestScore,
       rewards,
       coins: this.progress.coins,
       dailyMissions: this.getDailyMissions()

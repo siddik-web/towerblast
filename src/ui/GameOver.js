@@ -67,6 +67,7 @@ export class GameOver {
     won,
     levelConfig,
     hasNextLevel,
+    nextLevelId,
     destructionPercent,
     blockPoints,
     spareAmmoBonus = 0,
@@ -125,7 +126,7 @@ export class GameOver {
 
     if (won && hasNextLevel) {
       this.nextBtn.classList.remove('hidden');
-      this.nextBtn.textContent = `NEXT LEVEL (${levelConfig.id + 1}) ▶`;
+      this.nextBtn.textContent = `CONTINUE TO LEVEL (${nextLevelId || levelConfig.id + 1}) ▶`;
     } else {
       this.nextBtn.classList.add('hidden');
     }
