@@ -9,7 +9,7 @@ export class MainMenu {
       <div class="menu-topbar">
         <div class="pill stars-pill" id="mm-stars-pill">
           <span class="star-icon">★</span>
-          <span id="mm-stars-text">0 / 45</span>
+          <span id="mm-stars-text">0 / 75</span>
         </div>
         <button class="icon-btn" id="mm-sound-btn" title="Toggle Sound" aria-label="Toggle Sound">🔊</button>
       </div>
@@ -41,7 +41,7 @@ export class MainMenu {
       </div>
 
       <div class="menu-footer">
-        Drag to aim • Click or tap to blast • 15 Hand-Crafted Towers
+        Drag to aim • Click or tap to blast • 25 Hand-Crafted Towers
       </div>
 
       <div class="modal-backdrop hidden" id="mm-settings-modal">
