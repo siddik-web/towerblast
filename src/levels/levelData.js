@@ -773,6 +773,6 @@ export const LEVELS = [
     ammo: { cannonball: 1, bomb: 4, cluster: 2, rocket: 4 },
     starThresholds: [9500, 14800, 19800],
     build: buildLevel15
-  }
+  },
   ...buildAdvancedLevels()
 ];
