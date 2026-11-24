@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "Tower Blast",
+  "short_name": "Tower Blast",
+  "description": "A 3D physics-based arcade tower destruction game.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#142b47",
+  "theme_color": "#1e3a5f",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "./icons/towerblast.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
