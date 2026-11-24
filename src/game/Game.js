@@ -675,7 +675,15 @@ export class Game {
     };
 
     this.canvas.addEventListener('pointerup', handlePointerEnd);
-    this.canvas.addEventListener('pointercancel', handlePointerEnd);
+    this.canvas.addEventListener('pointercancel', (e) => {
+      if (!this.pointer.active || e.pointerId !== this.pointer.pointerId) return;
+      this.pointer.active = false;
+      this.pointer.pointerId = null;
+      this.pointer.dragged = false;
+      if (this.stateMachine.is(GameState.AIMING)) {
+        this.stateMachine.setState(GameState.READY);
+      }
+    });
 
     // Prevent accidental scroll/pinch gestures on mobile canvas
     this.canvas.addEventListener(
