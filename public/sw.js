@@ -7,11 +7,27 @@ const APP_SHELL = [
 ];
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME);
+    await cache.addAll(APP_SHELL);
+
+    // Pre-cache the compiled Vite entry point and stylesheet during install.
+    // This makes the very first successful online visit usable offline later,
+    // without requiring a second page refresh before the assets are cached.
+    const page = await fetch(APP_ROOT);
+    if (page.ok) {
+      const html = await page.text();
+      const assetUrls = [...html.matchAll(/(?:src|href)=["']([^"']+)["']/g)]
+        .map((match) => new URL(match[1], APP_ROOT))
+        .filter((url) => url.origin === self.location.origin)
+        .filter((url) => url.href.startsWith(APP_ROOT))
+        .map((url) => url.href);
+
+      await cache.addAll([...new Set(assetUrls)]);
+    }
+
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
@@ -51,7 +67,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache versioned Vite assets on first use, then serve them offline.
+  // Serve the versioned Vite bundle from cache after its initial precache.
   if (url.pathname.includes('/assets/') || url.pathname.endsWith('/manifest.webmanifest')) {
     event.respondWith(
       caches.match(request).then((cached) => {
