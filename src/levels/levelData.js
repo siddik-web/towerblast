@@ -546,7 +546,7 @@ function buildChallengeTower(spec) {
         pillarMat: material,
         slabH: material === 'steel' || material === 'concrete' ? 0.42 : 0.36,
         slabMat: mats[(i + f + 1) % mats.length],
-        centerMat: (f === spec.coreFloor && (i === 0 || i === xs.length - 1 || i === Math.floor(xs.length / 2))) ? 'explosive' : null,
+        centerMat: null,
         roofOverhang: 0.08
       });
     }
@@ -563,7 +563,7 @@ function buildChallengeTower(spec) {
   }
   // A low central charge rewards precision rather than indiscriminate top hits.
   if (spec.centralCharge) {
-    b.add(0, 0, 0, 0.78, 0.82, 0.78, 'explosive', 'cylinder');
+    b.add(0, 0, 1.5, 0.72, 0.82, 0.72, 'explosive', 'cylinder');
   }
   return b.blocks;
 }
