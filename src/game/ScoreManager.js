@@ -52,13 +52,15 @@ export class ScoreManager {
     const finalScore = this.score + spareAmmoBonus + completeBonus;
 
     const thresholds = levelConfig.starThresholds || [1000, 2200, 3500];
-    let stars = 1;
-    if (finalScore >= thresholds[1] || remainingAmmo >= 1) {
-      stars = 2;
-    }
-    if (finalScore >= thresholds[2] || (remainingAmmo >= 2 && destructionRatio >= 0.88)) {
+    // Stars are earned through score thresholds, not handed out for leftover ammo.
+    // Higher tiers use stricter demolition targets and much smaller ammo budgets.
+    let stars = finalScore >= thresholds[0] ? 1 : 0;
+    if (finalScore >= thresholds[1]) stars = 2;
+    if (finalScore >= thresholds[2] && destructionRatio >= Math.max(0.88, levelConfig.targetDestruction)) {
       stars = 3;
     }
+    // A completed level always earns at least one star.
+    stars = Math.max(1, stars);
 
     this.score = finalScore;
 
