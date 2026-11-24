@@ -18,6 +18,7 @@ export class GameOver {
         </div>
 
         <div class="go-new-best hidden" id="go-new-best">🏆 NEW HIGH SCORE!</div>
+        <div class="go-rewards hidden" id="go-rewards"></div>
 
         <div class="go-breakdown" id="go-breakdown">
           <div class="go-row"><span>Destruction</span><strong id="go-destruction">0%</strong></div>
@@ -46,6 +47,7 @@ export class GameOver {
     this.starsEl = this.el.querySelector('#go-stars');
     this.starEls = Array.from(this.el.querySelectorAll('.go-star'));
     this.newBestEl = this.el.querySelector('#go-new-best');
+    this.rewardsEl = this.el.querySelector('#go-rewards');
     this.destructionEl = this.el.querySelector('#go-destruction');
     this.blockPtsEl = this.el.querySelector('#go-block-pts');
     this.ammoRowEl = this.el.querySelector('#go-ammo-row');
@@ -72,14 +74,17 @@ export class GameOver {
     isTotalDemolition = false,
     finalScore = 0,
     stars = 0,
-    isNewBest = false
+    isNewBest = false,
+    rewards = []
   }) {
     this.el.classList.remove('hidden');
     this.badgeEl.className = `go-badge ${won ? 'win' : 'fail'}`;
     this.badgeEl.textContent = won
-      ? isTotalDemolition
-        ? 'TOTAL DEMOLITION!'
-        : 'LEVEL COMPLETE'
+      ? levelConfig.boss
+        ? '👑 BOSS DEFEATED!'
+        : isTotalDemolition
+          ? 'TOTAL DEMOLITION!'
+          : 'LEVEL COMPLETE'
       : 'OUT OF AMMUNITION';
 
     this.titleEl.textContent = won
@@ -102,6 +107,11 @@ export class GameOver {
     });
 
     this.newBestEl.classList.toggle('hidden', !(won && isNewBest));
+    const rewardCoins = rewards.reduce((total, reward) => total + reward.coins, 0);
+    this.rewardsEl.classList.toggle('hidden', !(won && rewards.length));
+    this.rewardsEl.textContent = rewards.length
+      ? `🎁 ${rewards.map((reward) => reward.label).join(' · ')}  |  +${rewardCoins} Siege Coins`
+      : '';
     this.destructionEl.textContent = `${destructionPercent}% (Target ${Math.round(levelConfig.targetDestruction * 100)}%)`;
     this.blockPtsEl.textContent = blockPoints.toLocaleString();
 
