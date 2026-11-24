@@ -31,15 +31,18 @@ test('wins unlock only the next sequential level and replay does not skip progre
   assert.equal(manager.getLevelStats(1).bestScore, 5100);
 });
 
-test('daily, milestone and boss rewards are awarded once', () => {
+test('daily, milestone and boss rewards are awarded once while best-score bonus is earned on mastery replay', () => {
   const manager = freshManager();
   for (let level = 1; level <= 15; level++) {
     manager.recordLevelWin(level, 5000, 2);
   }
   const firstCoins = manager.getCoins();
   assert.ok(firstCoins > 0);
-  manager.recordLevelWin(15, 6000, 3);
-  assert.equal(manager.getCoins(), firstCoins);
+  const replay = manager.recordLevelWin(15, 6000, 3);
+  assert.equal(manager.getCoins(), firstCoins + 20);
+  assert.deepEqual(replay.rewards.filter((reward) => reward.label === 'Personal Best Bonus'), [
+    { label: 'Personal Best Bonus', coins: 20 }
+  ]);
   assert.equal(manager.getDailySummary().completed, 3);
 });
 
@@ -68,7 +71,6 @@ test('invalid level selection is clamped to unlocked progression', () => {
   manager.recordLevelWin(1, 1000, 1);
   assert.equal(manager.setCurrentLevel(25).id, 2);
 });
-
 
 test('daily streak increments once per Dhaka date and achievements pay once', () => {
   const manager = freshManager();
