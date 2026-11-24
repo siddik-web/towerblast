@@ -224,7 +224,7 @@ export class Game {
       onNextLevel: () => {
         this.soundManager.playButtonClick();
         if (this.levelManager.hasNextLevel()) {
-          this.startLevel(this.levelManager.currentLevelId + 1);
+          this.startLevel(this.levelManager.getNextPlayableLevelId());
         } else {
           this.openLevelSelect();
         }
