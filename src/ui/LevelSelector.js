@@ -11,7 +11,7 @@ export class LevelSelector {
           <button class="btn btn-secondary btn-sm" id="ls-back-btn">← BACK</button>
           <div class="ls-title-block">
             <h2>SELECT LEVEL</h2>
-            <span class="ls-subtitle" id="ls-stars-summary">0 / 45 Stars</span>
+            <span class="ls-subtitle" id="ls-stars-summary">0 / 75 Stars</span>
           </div>
           <div style="width: 78px;"></div>
         </div>

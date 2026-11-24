@@ -517,6 +517,82 @@ function buildLevel15() {
   return b.blocks;
 }
 
+
+// Advanced challenge campaign: compact procedural blueprints with deliberately
+// limited ammunition, higher destruction targets and distinct structural puzzles.
+function buildChallengeTower(spec) {
+  const b = createBuilder();
+  const xs = spec.columns === 5 ? [-3.2, -1.6, 0, 1.6, 3.2] :
+    spec.columns === 4 ? [-2.4, -0.8, 0.8, 2.4] : [-2.0, 0, 2.0];
+  const mats = spec.materials;
+  let y = 0;
+
+  // Separate pylons share a vulnerable bridge: find the correct support to collapse.
+  for (let i = 0; i < xs.length; i++) {
+    let ty = 0;
+    const floors = spec.floors + (i === Math.floor(xs.length / 2) ? 1 : 0);
+    for (let f = 0; f < floors; f++) {
+      const material = mats[(i + f * 2) % mats.length];
+      ty = b.addStory({
+        y: ty,
+        offsetX: xs[i],
+        spanX: Math.max(0.95, 1.8 - f * 0.12),
+        spanZ: 1.25,
+        pillarH: 1.35 + (f % 2) * 0.18,
+        pillarW: material === 'steel' ? 0.62 : 0.52,
+        pillarD: material === 'steel' ? 0.62 : 0.52,
+        pillarMat: material,
+        slabH: material === 'steel' || material === 'concrete' ? 0.48 : 0.38,
+        slabMat: mats[(i + f + 1) % mats.length],
+        centerMat: (f === spec.coreFloor && (i === 0 || i === xs.length - 1 || i === Math.floor(xs.length / 2))) ? 'explosive' : null
+      });
+    }
+    b.addCrown(ty, xs[i], 0, mats[(i + 1) % mats.length], 0.85);
+    y = Math.max(y, ty);
+  }
+
+  // Suspended cross-beams force players to use blast direction and chain reactions.
+  if (spec.bridge) {
+    b.add(0, y * 0.48, 0, xs[xs.length - 1] - xs[0] + 1.1, 0.42, 1.0, spec.bridge);
+  }
+  if (spec.shield) {
+    b.add(0, 0, 1.95, 1.0, 2.2, 0.48, spec.shield);
+  }
+  // A low central charge rewards precision rather than indiscriminate top hits.
+  if (spec.centralCharge) {
+    b.add(0, 0, 0, 0.78, 0.82, 0.78, 'explosive', 'cylinder');
+  }
+  return b.blocks;
+}
+
+const ADVANCED_CHALLENGES = [
+  { name: 'Glass Needle Run', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'alpine', description: 'PRECISION: Two shots only. Break the glass feet before the stone crown settles.', columns: 3, floors: 4, materials: ['glass','stone','glass'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 1, bomb: 1, cluster: 0, rocket: 0 }, target: .91, stars: [4200,6100,7900] },
+  { name: 'TNT Switchyard', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'sunset', description: 'CHAIN REACTION: Trigger the outer charges to collapse the bridge into the center tower.', columns: 5, floors: 3, materials: ['wood','stone','glass'], coreFloor: 0, bridge: 'wood', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .90, stars: [5200,7300,9400] },
+  { name: 'Concrete Crossfire', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'twilight', description: 'ARMORED: A narrow firing lane protects the weak rear supports. Use a high arc.', columns: 4, floors: 4, materials: ['concrete','steel','glass'], coreFloor: 1, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 1, rocket: 1 }, target: .90, stars: [5800,8200,10800] },
+  { name: 'Domino Deadline', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'golden', description: 'DOMINO: Tip the left pylon first. The bridge must take down every tower.', columns: 5, floors: 3, materials: ['wood','glass','stone'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 2, bomb: 0, cluster: 1, rocket: 0 }, target: .92, stars: [5400,7600,9800] },
+  { name: 'Steel Heart', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'twilight', description: 'WEAK POINT: Steel armor surrounds a single explosive core. Save the rocket for the core.', columns: 3, floors: 5, materials: ['steel','concrete','glass'], coreFloor: 2, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 0, rocket: 1 }, target: .90, stars: [6500,9000,11800] },
+  { name: 'Twin Reactor', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'sunset', description: 'TWIN CHARGES: Detonate both outer cores with one carefully placed blast.', columns: 4, floors: 4, materials: ['stone','glass','concrete'], coreFloor: 1, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .91, stars: [6800,9400,12200] },
+  { name: 'The Last Bastion', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'twilight', description: 'EXPERT: Four shots. Maximize collapse damage; every missed shot matters.', columns: 5, floors: 4, materials: ['steel','stone','concrete','glass'], coreFloor: 0, bridge: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .92, stars: [8200,11200,14500] },
+  { name: 'Suspended Ruin', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'golden', description: 'SUSPENDED: Destroy the supports, not the upper bridge. Let gravity do the work.', columns: 3, floors: 5, materials: ['glass','concrete','wood'], coreFloor: 0, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .93, stars: [7600,10400,13600] },
+  { name: 'Fortress of Echoes', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'alpine', description: 'RICOCHET PLAN: Break the front shield, then chain the rear explosive supports.', columns: 4, floors: 5, materials: ['stone','steel','glass'], coreFloor: 1, shield: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .92, stars: [9000,12400,15800] },
+  { name: 'Worldbreaker', tier: 'Final Trials', tierIndex: 9, skyTheme: 'twilight', description: 'FINAL TRIAL: A multi-pylon fortress. Plan every shot and earn a 3-star demolition.', columns: 5, floors: 5, materials: ['steel','concrete','stone','glass'], coreFloor: 2, bridge: 'steel', shield: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 }, target: .93, stars: [11000,14800,19000] }
+];
+
+function buildAdvancedLevels() {
+  return ADVANCED_CHALLENGES.map((spec, index) => ({
+    id: 16 + index,
+    name: spec.name,
+    tier: spec.tier,
+    tierIndex: spec.tierIndex,
+    skyTheme: spec.skyTheme,
+    description: spec.description,
+    targetDestruction: spec.target,
+    ammo: spec.ammo,
+    starThresholds: spec.stars,
+    build: () => buildChallengeTower(spec)
+  }));
+}
+
 export const LEVELS = [
   {
     id: 1,
@@ -697,5 +773,6 @@ export const LEVELS = [
     ammo: { cannonball: 1, bomb: 4, cluster: 2, rocket: 4 },
     starThresholds: [9500, 14800, 19800],
     build: buildLevel15
-  }
+  },
+  ...buildAdvancedLevels()
 ];
