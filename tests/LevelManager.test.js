@@ -83,3 +83,20 @@ test('daily streak increments once per Dhaka date and achievements pay once', ()
   assert.equal(replay.rewards.filter((reward) => reward.label === 'Combo Master').length, 0);
   assert.equal(manager.getDailyStreak(), 1);
 });
+
+
+test('weapon workshop upgrades spend coins, cap at tier three and persist', () => {
+  const manager = freshManager();
+  manager.recordLevelWin(1, 5000, 3, { maxCombo: 5 });
+  const before = manager.getCoins();
+  const first = manager.purchaseWeaponUpgrade('cannonball');
+  assert.equal(first.success, true);
+  assert.equal(first.level, 1);
+  assert.equal(manager.getCoins(), before - 100);
+  assert.equal(manager.getWeaponUpgrades().cannonball, 1);
+  assert.equal(manager.purchaseWeaponUpgrade('cannonball').level, 2);
+  assert.equal(manager.purchaseWeaponUpgrade('cannonball').level, 3);
+  assert.equal(manager.purchaseWeaponUpgrade('cannonball').reason, 'max-level');
+  const restored = new LevelManager();
+  assert.equal(restored.getWeaponUpgrades().cannonball, 3);
+});
