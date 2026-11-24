@@ -596,7 +596,8 @@ export class Game {
       shadowsEnabled: this.levelManager.getShadowsEnabled(),
       coins: this.levelManager.getCoins(),
       dailyMissions: this.levelManager.getDailyMissions(),
-      dailyDate: this.levelManager.getDailySummary().date
+      dailyDate: this.levelManager.getDailySummary().date,
+      streak: this.levelManager.getDailyStreak()
     });
   }
 

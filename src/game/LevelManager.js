@@ -52,6 +52,8 @@ export class LevelManager {
       claimedCampaignRewards: [],
       defeatedBosses: [],
       daily: createDailyState(),
+      streak: { count: 0, lastDate: '' },
+      achievementClaims: [],
       settings: { shadowsEnabled: true }
     };
   }
@@ -106,6 +108,8 @@ export class LevelManager {
           ? [...new Set(parsed.defeatedBosses.filter((id) => this.levels.some((level) => level.id === id && level.boss)))]
           : [],
         daily: normalizedDaily,
+        streak: isRecord(parsed.streak) ? { count: Math.max(0, Math.floor(finiteNumber(parsed.streak.count))), lastDate: typeof parsed.streak.lastDate === 'string' ? parsed.streak.lastDate : '' } : { count: 0, lastDate: '' },
+        achievementClaims: Array.isArray(parsed.achievementClaims) ? [...new Set(parsed.achievementClaims.filter((id) => ['first-clear','campaign-10','star-hunter','combo-master'].includes(id)))] : [],
         settings: { shadowsEnabled: typeof parsed.settings?.shadowsEnabled === 'boolean' ? parsed.settings.shadowsEnabled : true }
       };
     } catch {
@@ -157,6 +161,7 @@ export class LevelManager {
 
   getMaxStars() { return this.levels.length * 3; }
   getCoins() { return this.progress.coins; }
+  getDailyStreak() { return this.progress.streak.count; }
 
   getDailyMissions() {
     this._refreshDailyState();
@@ -201,7 +206,7 @@ export class LevelManager {
     return rewards;
   }
 
-  recordLevelWin(levelId, score, stars) {
+  recordLevelWin(levelId, score, stars, summary = {}) {
     const id = Number(levelId);
     const level = this.levels.find((item) => item.id === id);
     if (!level || !this.isUnlocked(id)) {
@@ -224,6 +229,13 @@ export class LevelManager {
     }
 
     const rewards = [];
+    const today = getDhakaDateKey();
+    if (this.progress.streak.lastDate !== today) {
+      const previous = this.progress.streak.lastDate;
+      const yesterday = new Date(new Date(`${today}T00:00:00Z`).getTime() - 86400000).toISOString().slice(0, 10);
+      this.progress.streak.count = previous === yesterday ? this.progress.streak.count + 1 : 1;
+      this.progress.streak.lastDate = today;
+    }
     this.progress.daily.levelsCleared += 1;
     this.progress.daily.bestScore = Math.max(this.progress.daily.bestScore, safeScore);
     this.progress.daily.bestStars = Math.max(this.progress.daily.bestStars, safeStars);
@@ -241,6 +253,24 @@ export class LevelManager {
       rewards.push({ label: milestone.title, coins: milestone.coins });
     }
 
+    // Reward replay mastery, not repetitive farming: coins only for a new personal best.
+    if (isNewBest && existing.completed) {
+      this.progress.coins += 20;
+      rewards.push({ label: 'Personal Best Bonus', coins: 20 });
+    }
+    const achievements = [
+      { id: 'first-clear', test: () => Object.values(this.progress.levelStats).some((stat) => stat.completed), label: 'First Demolition', coins: 50 },
+      { id: 'campaign-10', test: () => Object.values(this.progress.levelStats).filter((stat) => stat.completed).length >= 10, label: 'Veteran Demolisher', coins: 150 },
+      { id: 'star-hunter', test: () => this.getTotalStars() >= 25, label: 'Star Hunter', coins: 125 },
+      { id: 'combo-master', test: () => finiteNumber(summary.maxCombo) >= 5, label: 'Combo Master', coins: 100 }
+    ];
+    for (const achievement of achievements) {
+      if (!this.progress.achievementClaims.includes(achievement.id) && achievement.test()) {
+        this.progress.achievementClaims.push(achievement.id);
+        this.progress.coins += achievement.coins;
+        rewards.push({ label: achievement.label, coins: achievement.coins });
+      }
+    }
     rewards.push(...this._claimDailyRewards());
     this._saveProgress();
     return {
@@ -248,6 +278,7 @@ export class LevelManager {
       bestScore: this.progress.levelStats[id].bestScore,
       rewards,
       coins: this.progress.coins,
+      streak: this.progress.streak.count,
       dailyMissions: this.getDailyMissions()
     };
   }
