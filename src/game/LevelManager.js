@@ -54,6 +54,7 @@ export class LevelManager {
       daily: createDailyState(),
       streak: { count: 0, lastDate: '' },
       achievementClaims: [],
+      weaponUpgrades: { cannonball: 0, bomb: 0, cluster: 0, rocket: 0 },
       settings: { shadowsEnabled: true }
     };
   }
@@ -110,6 +111,7 @@ export class LevelManager {
         daily: normalizedDaily,
         streak: isRecord(parsed.streak) ? { count: Math.max(0, Math.floor(finiteNumber(parsed.streak.count))), lastDate: typeof parsed.streak.lastDate === 'string' ? parsed.streak.lastDate : '' } : { count: 0, lastDate: '' },
         achievementClaims: Array.isArray(parsed.achievementClaims) ? [...new Set(parsed.achievementClaims.filter((id) => ['first-clear','campaign-10','star-hunter','combo-master'].includes(id)))] : [],
+        weaponUpgrades: Object.fromEntries(['cannonball','bomb','cluster','rocket'].map((id) => [id, Math.max(0, Math.min(3, Math.floor(finiteNumber(parsed.weaponUpgrades?.[id]))))])),
         settings: { shadowsEnabled: typeof parsed.settings?.shadowsEnabled === 'boolean' ? parsed.settings.shadowsEnabled : true }
       };
     } catch {
@@ -162,6 +164,20 @@ export class LevelManager {
   getMaxStars() { return this.levels.length * 3; }
   getCoins() { return this.progress.coins; }
   getDailyStreak() { return this.progress.streak.count; }
+  getWeaponUpgrades() { return { ...this.progress.weaponUpgrades }; }
+  getWeaponUpgradeCost(weaponId) {
+    const level = this.progress.weaponUpgrades[weaponId];
+    if (level === undefined || level >= 3) return null;
+    return 100 * (level + 1);
+  }
+  purchaseWeaponUpgrade(weaponId) {
+    const cost = this.getWeaponUpgradeCost(weaponId);
+    if (cost === null || this.progress.coins < cost) return { success: false, reason: cost === null ? 'max-level' : 'insufficient-coins' };
+    this.progress.coins -= cost;
+    this.progress.weaponUpgrades[weaponId] += 1;
+    this._saveProgress();
+    return { success: true, cost, level: this.progress.weaponUpgrades[weaponId], coins: this.progress.coins };
+  }
 
   getDailyMissions() {
     this._refreshDailyState();

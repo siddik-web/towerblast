@@ -23,7 +23,7 @@ export class WeaponManager {
     }
   }
 
-  loadAmmo(ammoConfig) {
+  loadAmmo(ammoConfig, upgrades = {}) {
     this.clearProjectiles();
     this.ammo = {
       cannonball: ammoConfig.cannonball || 0,
@@ -32,6 +32,7 @@ export class WeaponManager {
       rocket: ammoConfig.rocket || 0
     };
     this.initialAmmoTotal = this.getTotalAmmo();
+    this.upgrades = { ...upgrades };
     this.shotsFired = 0;
     this.selectFirstAvailable();
   }
@@ -88,7 +89,16 @@ export class WeaponManager {
   fire(cannon) {
     if (!this.canFire()) return null;
 
-    const weaponDef = this.getSelectedWeapon();
+    const baseWeaponDef = this.getSelectedWeapon();
+    const upgradeLevel = Math.max(0, Math.min(3, Number(this.upgrades?.[baseWeaponDef.id]) || 0));
+    // Each workshop tier adds 5% damage; original weapon definitions remain immutable.
+    const damageScale = 1 + upgradeLevel * 0.05;
+    const weaponDef = {
+      ...baseWeaponDef,
+      directDamage: baseWeaponDef.directDamage * damageScale,
+      blastDamage: baseWeaponDef.blastDamage * damageScale,
+      blastForce: baseWeaponDef.blastForce * (1 + upgradeLevel * 0.025)
+    };
     this.ammo[weaponDef.id] = Math.max(0, this.ammo[weaponDef.id] - 1);
     this.shotsFired++;
 
