@@ -629,8 +629,8 @@ export const LEVELS = [
     tierIndex: 1,
     skyTheme: 'sunny',
     description: 'A tall wooden pagoda built over a brittle glass mid-section.',
-    targetDestruction: 0.90,
-    ammo: { cannonball: 4, bomb: 2, cluster: 0, rocket: 0 },
+    targetDestruction: 0.89,
+    ammo: { cannonball: 3, bomb: 1, cluster: 0, rocket: 0 },
     starThresholds: [2200, 3800, 5200],
     build: buildLevel3
   },
@@ -641,7 +641,7 @@ export const LEVELS = [
     tierIndex: 2,
     skyTheme: 'alpine',
     description: 'Scatter Shot unlocked! Shatter the wooden middle floor or detonate the stone base TNT.',
-    targetDestruction: 0.80,
+    targetDestruction: 0.89,
     ammo: { cannonball: 2, bomb: 1, cluster: 1, rocket: 0 },
     starThresholds: [2400, 4000, 5500],
     build: buildLevel4
@@ -653,8 +653,8 @@ export const LEVELS = [
     tierIndex: 2,
     skyTheme: 'alpine',
     description: 'Heavy stone buttresses guard an explosive vault inside this towering spire.',
-    targetDestruction: 0.82,
-    ammo: { cannonball: 3, bomb: 2, cluster: 2, rocket: 0 },
+    targetDestruction: 0.90,
+    ammo: { cannonball: 2, bomb: 1, cluster: 1, rocket: 0 },
     starThresholds: [3200, 5200, 6900],
     build: buildLevel5
   },
@@ -665,8 +665,8 @@ export const LEVELS = [
     tierIndex: 2,
     skyTheme: 'alpine',
     description: 'Power Rocket unlocked! Blast straight through heavy concrete arches!',
-    targetDestruction: 0.82,
-    ammo: { cannonball: 2, bomb: 2, cluster: 1, rocket: 2 },
+    targetDestruction: 0.90,
+    ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 },
     starThresholds: [3400, 5600, 7400],
     build: buildLevel6
   },
@@ -677,8 +677,8 @@ export const LEVELS = [
     tierIndex: 3,
     skyTheme: 'golden',
     description: 'Layered stone, wood, and glass—collapse the lower core for maximum combos.',
-    targetDestruction: 0.82,
-    ammo: { cannonball: 2, bomb: 2, cluster: 2, rocket: 1 },
+    targetDestruction: 0.91,
+    ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 },
     starThresholds: [3200, 5400, 7200],
     build: buildLevel7
   },
@@ -702,7 +702,7 @@ export const LEVELS = [
     skyTheme: 'golden',
     description: 'Trigger twin base explosives for a chain-reaction pyramid collapse!',
     targetDestruction: 0.92,
-    ammo: { cannonball: 2, bomb: 2, cluster: 2, rocket: 2 },
+    ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 },
     starThresholds: [4600, 7600, 10200],
     build: buildLevel9
   },
@@ -713,8 +713,8 @@ export const LEVELS = [
     tierIndex: 4,
     skyTheme: 'sunset',
     description: 'Five alternating stories of concrete, glass, and stone towering into the clouds.',
-    targetDestruction: 0.83,
-    ammo: { cannonball: 2, bomb: 2, cluster: 2, rocket: 2 },
+    targetDestruction: 0.92,
+    ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 },
     starThresholds: [4800, 7800, 10600],
     build: buildLevel10
   },
@@ -725,7 +725,7 @@ export const LEVELS = [
     tierIndex: 4,
     skyTheme: 'sunset',
     description: 'Three tall towers separated by volatile TNT canisters—ignite the gaps!',
-    targetDestruction: 0.82,
+    targetDestruction: 0.92,
     ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 1 },
     starThresholds: [6200, 9800, 13200],
     build: buildLevel11
@@ -737,7 +737,7 @@ export const LEVELS = [
     tierIndex: 4,
     skyTheme: 'sunset',
     description: 'Knock the front monolith backward to tip the entire hall like giant dominoes!',
-    targetDestruction: 0.82,
+    targetDestruction: 0.92,
     ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 },
     starThresholds: [4800, 7800, 10500],
     build: buildLevel12
@@ -749,7 +749,7 @@ export const LEVELS = [
     tierIndex: 5,
     skyTheme: 'twilight',
     description: 'Armored steel pillars shield an explosive vault. Use Rockets or high-arc Bombs!',
-    targetDestruction: 0.82,
+    targetDestruction: 0.93,
     ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 2 },
     starThresholds: [5400, 8600, 11600],
     build: buildLevel13
@@ -761,7 +761,7 @@ export const LEVELS = [
     tierIndex: 5,
     skyTheme: 'twilight',
     description: 'Six reinforced stories—target the recessed glass mid-layer and TNT cores!',
-    targetDestruction: 0.82,
+    targetDestruction: 0.93,
     ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 2 },
     starThresholds: [6800, 10800, 14500],
     build: buildLevel14
@@ -774,7 +774,7 @@ export const LEVELS = [
     tierIndex: 5,
     skyTheme: 'twilight',
     description: 'The ultimate fortress! Breach the central reactor spire to obliterate both wings.',
-    targetDestruction: 0.82,
+    targetDestruction: 0.94,
     ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 2 },
     starThresholds: [9500, 14800, 19800],
     build: buildLevel15
