@@ -19,6 +19,7 @@ export class GameOver {
 
         <div class="go-new-best hidden" id="go-new-best">🏆 NEW HIGH SCORE!</div>
         <div class="go-combo" id="go-combo">⚡ BEST COMBO x1</div>
+        <div class="go-challenge hidden" id="go-challenge"></div>
         <div class="go-rewards hidden" id="go-rewards"></div>
 
         <div class="go-breakdown" id="go-breakdown">
@@ -49,6 +50,7 @@ export class GameOver {
     this.starEls = Array.from(this.el.querySelectorAll('.go-star'));
     this.newBestEl = this.el.querySelector('#go-new-best');
     this.comboEl = this.el.querySelector('#go-combo');
+    this.challengeEl = this.el.querySelector('#go-challenge');
     this.rewardsEl = this.el.querySelector('#go-rewards');
     this.destructionEl = this.el.querySelector('#go-destruction');
     this.blockPtsEl = this.el.querySelector('#go-block-pts');
@@ -79,7 +81,9 @@ export class GameOver {
     stars = 0,
     isNewBest = false,
     rewards = [],
-    maxCombo = 1
+    maxCombo = 1,
+    dailyChallengeSuccess = false,
+    dailyChallenge = null
   }) {
     this.el.classList.remove('hidden');
     this.badgeEl.className = `go-badge ${won ? 'win' : 'fail'}`;
@@ -113,6 +117,14 @@ export class GameOver {
     this.newBestEl.classList.toggle('hidden', !(won && isNewBest));
     this.comboEl.textContent = `⚡ BEST COMBO x${Math.max(1, maxCombo)}`;
     this.comboEl.classList.toggle('hidden', !won);
+    const showChallenge = Boolean(dailyChallengeSuccess || dailyChallenge);
+    this.challengeEl.classList.toggle('hidden', !showChallenge);
+    this.challengeEl.classList.toggle('success', dailyChallengeSuccess);
+    this.challengeEl.textContent = dailyChallengeSuccess
+      ? '🎯 DAILY CHALLENGE COMPLETE · BONUS REWARDED!'
+      : dailyChallenge
+        ? `DAILY OBJECTIVE MISSED · ${dailyChallenge.hint}`
+        : '';
     const rewardCoins = rewards.reduce((total, reward) => total + reward.coins, 0);
     this.rewardsEl.classList.toggle('hidden', !(won && rewards.length));
     this.rewardsEl.textContent = rewards.length

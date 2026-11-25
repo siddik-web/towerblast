@@ -108,6 +108,8 @@ export class Game {
     this.winGraceTimer = 0;
     this.winPending = false;
     this.outOfAmmoTimer = 0;
+    this.shotsFired = 0;
+    this.dailyChallengeActive = false;
     this.isDisposed = false;
 
     this._bindInputEvents();
@@ -135,6 +137,10 @@ export class Game {
       onPlay: () => {
         this.soundManager.playButtonClick();
         this.startLevel(this.levelManager.getNextPlayableLevelId());
+      },
+      onDailyChallenge: () => {
+        const challenge = this.levelManager.getDailyChallenge();
+        if (!challenge.claimed) this.startLevel(challenge.levelId, { dailyChallenge: true });
       },
       onOpenLevels: () => {
         this.soundManager.playButtonClick();
@@ -364,8 +370,10 @@ export class Game {
     this.stateMachine.setState(GameState.LEVEL_SELECT);
   }
 
-  startLevel(levelId) {
+  startLevel(levelId, options = {}) {
     const levelConfig = this.levelManager.setCurrentLevel(levelId);
+    this.dailyChallengeActive = Boolean(options.dailyChallenge);
+    this.shotsFired = 0;
 
     // Cleanly reset world, effects, projectiles, score & timers
     this.winPending = false;
@@ -440,6 +448,7 @@ export class Game {
     this.shotElapsed = 0;
     this.settleTimer = 0;
     this.outOfAmmoTimer = 0;
+    this.shotsFired += 1;
     this.stateMachine.setState(GameState.SHOOTING);
     this._syncHUD();
   }
@@ -539,12 +548,26 @@ export class Game {
     const remainingAmmo = this.weaponManager.getTotalAmmo();
 
     const summary = this.scoreManager.finalizeLevel(levelCfg, ratio, remainingAmmo);
+    summary.destructionRatio = ratio;
+    summary.remainingAmmo = remainingAmmo;
+    summary.shotsFired = this.shotsFired;
     const { isNewBest, rewards } = this.levelManager.recordLevelWin(
       levelCfg.id,
       summary.finalScore,
       summary.stars,
       summary
     );
+    const dailyChallenge = this.dailyChallengeActive
+      ? this.levelManager.recordDailyChallengeWin(summary)
+      : null;
+    if (dailyChallenge?.success) {
+      rewards.push({ label: 'Daily Challenge Complete', coins: dailyChallenge.reward });
+      summary.dailyChallengeSuccess = true;
+    } else if (this.dailyChallengeActive) {
+      summary.dailyChallengeSuccess = false;
+      summary.dailyChallenge = this.levelManager.getDailyChallenge();
+    }
+    this.dailyChallengeActive = false;
 
     this._syncMainMenuUI();
     this.gameHUD.updateScore(summary.finalScore);
@@ -604,7 +627,8 @@ export class Game {
       dailyMissions: this.levelManager.getDailyMissions(),
       dailyDate: this.levelManager.getDailySummary().date,
       streak: this.levelManager.getDailyStreak(),
-      weaponUpgrades: this.levelManager.getWeaponUpgrades()
+      weaponUpgrades: this.levelManager.getWeaponUpgrades(),
+      dailyChallenge: this.levelManager.getDailyChallenge()
     });
   }
 
