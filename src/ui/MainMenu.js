@@ -40,6 +40,9 @@ export class MainMenu {
             </button>
           </div>
           <button class="btn btn-secondary daily-missions-btn" id="mm-daily-btn">📅 DAILY MISSIONS <span id="mm-daily-count">0/3</span></button>
+          <button class="btn btn-secondary daily-challenge-btn" id="mm-challenge-btn">
+            🎯 DAILY CHALLENGE <span id="mm-challenge-label">PLAY</span>
+          </button>
           <button class="btn btn-secondary workshop-btn" id="mm-workshop-btn">🛠️ WEAPON WORKSHOP</button>
         </div>
       </div>
@@ -133,6 +136,9 @@ export class MainMenu {
     this.el.querySelector('#mm-levels-btn').addEventListener('click', () => {
       this.handlers.onOpenLevels();
     });
+    this.el.querySelector('#mm-challenge-btn').addEventListener('click', () => {
+      this.handlers.onDailyChallenge();
+    });
     this.el.querySelector('#mm-workshop-btn').addEventListener('click', () => {
       this.workshopModal.classList.remove('hidden');
       this.handlers.onButtonClick();
@@ -204,12 +210,20 @@ export class MainMenu {
     });
   }
 
-  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '', streak = 0, weaponUpgrades = {} }) {
+  update({ totalStars, maxStars, nextLevelId, muted, sfxEnabled, musicEnabled, shadowsEnabled, coins = 0, dailyMissions = [], dailyDate = '', streak = 0, weaponUpgrades = {}, dailyChallenge = null }) {
     this.starsText.textContent = `${totalStars} / ${maxStars}`;
     this.coinsText.textContent = coins.toLocaleString();
     this.streakText.textContent = String(streak);
     const completed = dailyMissions.filter((mission) => mission.claimed).length;
     this.dailyCount.textContent = `${completed}/${dailyMissions.length}`;
+    const challengeButton = this.el.querySelector('#mm-challenge-btn');
+    const challengeLabel = this.el.querySelector('#mm-challenge-label');
+    if (dailyChallenge) {
+      challengeLabel.textContent = dailyChallenge.claimed ? 'COMPLETED' : `LVL ${dailyChallenge.levelId}`;
+      challengeButton.title = `${dailyChallenge.title}: ${dailyChallenge.description}`;
+      challengeButton.disabled = dailyChallenge.claimed;
+      challengeButton.classList.toggle('challenge-complete', dailyChallenge.claimed);
+    }
     this.dailyDate.textContent = dailyDate ? `Today · ${dailyDate}` : '';
     this.dailyWallet.textContent = coins.toLocaleString();
     this.workshopWallet.textContent = coins.toLocaleString();
