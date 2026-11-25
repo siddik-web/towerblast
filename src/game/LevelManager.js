@@ -21,7 +21,7 @@ function getDhakaDateKey() {
 }
 
 function createDailyState(date = getDhakaDateKey()) {
-  return { date, levelsCleared: 0, bestScore: 0, bestStars: 0, claimed: [] };
+  return { date, levelsCleared: 0, bestScore: 0, bestStars: 0, claimed: [], challengeClaimed: false };
 }
 
 const DAILY_MISSIONS = [
@@ -89,7 +89,8 @@ export class LevelManager {
             bestStars: Math.max(0, Math.min(3, Math.floor(finiteNumber(daily.bestStars)))),
             claimed: Array.isArray(daily.claimed)
               ? [...new Set(daily.claimed.filter((id) => DAILY_MISSIONS.some((mission) => mission.id === id)))]
-              : []
+              : [],
+            challengeClaimed: Boolean(daily.challengeClaimed)
           }
         : createDailyState(today);
 
@@ -190,6 +191,45 @@ export class LevelManager {
         claimed: this.progress.daily.claimed.includes(mission.id)
       };
     });
+  }
+
+  getDailyChallenge() {
+    this._refreshDailyState();
+    const date = this.progress.daily.date;
+    const dayNumber = Number(date.replace(/-/g, ''));
+    const levelId = ((dayNumber + this.progress.unlockedLevel * 7) % this.progress.unlockedLevel) + 1;
+    const rules = [
+      { id: 'precision', title: 'Precision Demolition', description: 'Beat the level target by at least 4 percentage points.', hint: 'Destroy more than the minimum.', reward: 120 },
+      { id: 'efficiency', title: 'Ammo Saver', description: 'Clear the tower with at least 2 shots remaining.', hint: 'Make every shot count.', reward: 120 },
+      { id: 'combo', title: 'Chain Reaction', description: 'Reach a destruction combo of x4 or higher.', hint: 'Trigger a cascading collapse.', reward: 120 }
+    ];
+    const rule = rules[dayNumber % rules.length];
+    return {
+      date,
+      levelId,
+      levelName: this.getLevel(levelId).name,
+      ...rule,
+      claimed: this.progress.daily.challengeClaimed
+    };
+  }
+
+  recordDailyChallengeWin(summary = {}) {
+    const challenge = this.getDailyChallenge();
+    if (challenge.claimed) return { success: false, reason: 'already-claimed', reward: 0 };
+    const level = this.getLevel(challenge.levelId);
+    const ratio = finiteNumber(summary.destructionRatio);
+    const remainingAmmo = Math.max(0, Math.floor(finiteNumber(summary.remainingAmmo)));
+    const maxCombo = Math.max(1, Math.floor(finiteNumber(summary.maxCombo, 1)));
+    const passed = challenge.id === 'precision'
+      ? ratio >= Math.min(0.99, level.targetDestruction + 0.04)
+      : challenge.id === 'efficiency'
+        ? remainingAmmo >= 2
+        : maxCombo >= 4;
+    if (!passed) return { success: false, reason: 'objective-not-met', reward: 0, challenge };
+    this.progress.daily.challengeClaimed = true;
+    this.progress.coins += challenge.reward;
+    this._saveProgress();
+    return { success: true, reward: challenge.reward, challenge };
   }
 
   getDailySummary() {
