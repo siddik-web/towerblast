@@ -569,16 +569,16 @@ function buildChallengeTower(spec) {
 }
 
 const ADVANCED_CHALLENGES = [
-  { name: 'Glass Needle Run', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'alpine', description: 'PRECISION: Two shots only. Break the glass feet before the stone crown settles.', columns: 3, floors: 4, materials: ['glass','stone','glass'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 1, bomb: 1, cluster: 0, rocket: 0 }, target: .91, stars: [4200,6100,7900] },
-  { name: 'TNT Switchyard', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'sunset', description: 'CHAIN REACTION: Trigger the outer charges to collapse the bridge into the center tower.', columns: 5, floors: 3, materials: ['wood','stone','glass'], coreFloor: 0, bridge: 'wood', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .90, stars: [5200,7300,9400] },
-  { name: 'Concrete Crossfire', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'twilight', description: 'ARMORED: A narrow firing lane protects the weak rear supports. Use a high arc.', columns: 4, floors: 4, materials: ['concrete','steel','glass'], coreFloor: 1, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 1, rocket: 1 }, target: .90, stars: [5800,8200,10800] },
-  { name: 'Domino Deadline', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'golden', description: 'DOMINO: Tip the left pylon first. The bridge must take down every tower.', columns: 5, floors: 3, materials: ['wood','glass','stone'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 2, bomb: 0, cluster: 1, rocket: 0 }, target: .92, stars: [5400,7600,9800] },
-  { name: 'Steel Heart', boss: { name: 'The Iron Warden', rewardCoins: 250, rewardTitle: 'Iron Warden Crest' }, tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'twilight', description: 'WEAK POINT: Steel armor surrounds a single explosive core. Save the rocket for the core.', columns: 3, floors: 5, materials: ['steel','concrete','glass'], coreFloor: 2, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 0, rocket: 1 }, target: .90, stars: [6500,9000,11800] },
-  { name: 'Twin Reactor', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'sunset', description: 'TWIN CHARGES: Detonate both outer cores with one carefully placed blast.', columns: 4, floors: 4, materials: ['stone','glass','concrete'], coreFloor: 1, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .91, stars: [6800,9400,12200] },
-  { name: 'The Last Bastion', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'twilight', description: 'EXPERT: Four shots. Maximize collapse damage; every missed shot matters.', columns: 5, floors: 4, materials: ['steel','stone','concrete','glass'], coreFloor: 0, bridge: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .92, stars: [8200,11200,14500] },
-  { name: 'Suspended Ruin', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'golden', description: 'SUSPENDED: Destroy the supports, not the upper bridge. Let gravity do the work.', columns: 3, floors: 5, materials: ['glass','concrete','wood'], coreFloor: 0, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .93, stars: [7600,10400,13600] },
-  { name: 'Fortress of Echoes', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'alpine', description: 'RICOCHET PLAN: Break the front shield, then chain the rear explosive supports.', columns: 4, floors: 5, materials: ['stone','steel','glass'], coreFloor: 1, shield: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .92, stars: [9000,12400,15800] },
-  { name: 'Worldbreaker', boss: { name: 'Worldbreaker Prime', rewardCoins: 500, rewardTitle: 'Worldbreaker Trophy' }, tier: 'Final Trials', tierIndex: 9, skyTheme: 'twilight', description: 'FINAL TRIAL: A multi-pylon fortress. Plan every shot and earn a 3-star demolition.', columns: 5, floors: 5, materials: ['steel','concrete','stone','glass'], coreFloor: 2, bridge: 'steel', shield: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 }, target: .93, stars: [11000,14800,19000] }
+  { name: 'Glass Needle Run', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'alpine', description: 'PRECISION: Two shots only. Break the glass feet before the stone crown settles.', columns: 3, floors: 4, materials: ['glass','stone','glass'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 1, bomb: 1, cluster: 0, rocket: 0 }, target: .94, stars: [4200,6100,7900] },
+  { name: 'TNT Switchyard', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'sunset', description: 'CHAIN REACTION: Trigger the outer charges to collapse the bridge into the center tower.', columns: 5, floors: 3, materials: ['wood','stone','glass'], coreFloor: 0, bridge: 'wood', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .94, stars: [5200,7300,9400] },
+  { name: 'Concrete Crossfire', tier: 'Precision Trials', tierIndex: 6, skyTheme: 'twilight', description: 'ARMORED: A narrow firing lane protects the weak rear supports. Use a high arc.', columns: 4, floors: 4, materials: ['concrete','steel','glass'], coreFloor: 1, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 1, rocket: 1 }, target: .95, stars: [5800,8200,10800] },
+  { name: 'Domino Deadline', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'golden', description: 'DOMINO: Tip the left pylon first. The bridge must take down every tower.', columns: 5, floors: 3, materials: ['wood','glass','stone'], coreFloor: 0, bridge: 'stone', ammo: { cannonball: 2, bomb: 0, cluster: 1, rocket: 0 }, target: .95, stars: [5400,7600,9800] },
+  { name: 'Steel Heart', boss: { name: 'The Iron Warden', rewardCoins: 250, rewardTitle: 'Iron Warden Crest' }, tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'twilight', description: 'WEAK POINT: Steel armor surrounds a single explosive core. Save the rocket for the core.', columns: 3, floors: 5, materials: ['steel','concrete','glass'], coreFloor: 2, shield: 'steel', ammo: { cannonball: 0, bomb: 1, cluster: 0, rocket: 1 }, target: .96, stars: [6500,9000,11800] },
+  { name: 'Twin Reactor', tier: 'Chain Reaction', tierIndex: 7, skyTheme: 'sunset', description: 'TWIN CHARGES: Detonate both outer cores with one carefully placed blast.', columns: 4, floors: 4, materials: ['stone','glass','concrete'], coreFloor: 1, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .95, stars: [6800,9400,12200] },
+  { name: 'The Last Bastion', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'twilight', description: 'EXPERT: Four shots. Maximize collapse damage; every missed shot matters.', columns: 5, floors: 4, materials: ['steel','stone','concrete','glass'], coreFloor: 0, bridge: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .96, stars: [8200,11200,14500] },
+  { name: 'Suspended Ruin', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'golden', description: 'SUSPENDED: Destroy the supports, not the upper bridge. Let gravity do the work.', columns: 3, floors: 5, materials: ['glass','concrete','wood'], coreFloor: 0, bridge: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 0 }, target: .96, stars: [7600,10400,13600] },
+  { name: 'Fortress of Echoes', tier: 'Expert Siege', tierIndex: 8, skyTheme: 'alpine', description: 'RICOCHET PLAN: Break the front shield, then chain the rear explosive supports.', columns: 4, floors: 5, materials: ['stone','steel','glass'], coreFloor: 1, shield: 'concrete', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 }, target: .96, stars: [9000,12400,15800] },
+  { name: 'Worldbreaker', boss: { name: 'Worldbreaker Prime', rewardCoins: 500, rewardTitle: 'Worldbreaker Trophy' }, tier: 'Final Trials', tierIndex: 9, skyTheme: 'twilight', description: 'FINAL TRIAL: A multi-pylon fortress. Plan every shot and earn a 3-star demolition.', columns: 5, floors: 5, materials: ['steel','concrete','stone','glass'], coreFloor: 2, bridge: 'steel', shield: 'steel', ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 }, target: .97, stars: [11000,14800,19000] }
 ];
 
 function buildAdvancedLevels() {
@@ -605,8 +605,8 @@ export const LEVELS = [
     tierIndex: 1,
     skyTheme: 'sunny',
     description: 'Aim for the glowing TNT barrel inside the base to bring the whole outpost down!',
-    targetDestruction: 0.78,
-    ammo: { cannonball: 5, bomb: 0, cluster: 0, rocket: 0 },
+    targetDestruction: 0.86,
+    ammo: { cannonball: 4, bomb: 0, cluster: 0, rocket: 0 },
     starThresholds: [900, 1800, 2600],
     build: buildLevel1
   },
@@ -617,8 +617,8 @@ export const LEVELS = [
     tierIndex: 1,
     skyTheme: 'sunny',
     description: 'Mega Bomb unlocked! Drop a bomb in the center gap to topple both watchtowers.',
-    targetDestruction: 0.80,
-    ammo: { cannonball: 4, bomb: 2, cluster: 0, rocket: 0 },
+    targetDestruction: 0.88,
+    ammo: { cannonball: 3, bomb: 1, cluster: 0, rocket: 0 },
     starThresholds: [1800, 3200, 4400],
     build: buildLevel2
   },
@@ -629,7 +629,7 @@ export const LEVELS = [
     tierIndex: 1,
     skyTheme: 'sunny',
     description: 'A tall wooden pagoda built over a brittle glass mid-section.',
-    targetDestruction: 0.82,
+    targetDestruction: 0.90,
     ammo: { cannonball: 4, bomb: 2, cluster: 0, rocket: 0 },
     starThresholds: [2200, 3800, 5200],
     build: buildLevel3
@@ -642,7 +642,7 @@ export const LEVELS = [
     skyTheme: 'alpine',
     description: 'Scatter Shot unlocked! Shatter the wooden middle floor or detonate the stone base TNT.',
     targetDestruction: 0.80,
-    ammo: { cannonball: 3, bomb: 2, cluster: 2, rocket: 0 },
+    ammo: { cannonball: 2, bomb: 1, cluster: 1, rocket: 0 },
     starThresholds: [2400, 4000, 5500],
     build: buildLevel4
   },
@@ -689,8 +689,8 @@ export const LEVELS = [
     tierIndex: 3,
     skyTheme: 'golden',
     description: 'Twin stone gatehouses linked by a fragile glass courtyard.',
-    targetDestruction: 0.83,
-    ammo: { cannonball: 2, bomb: 2, cluster: 2, rocket: 2 },
+    targetDestruction: 0.91,
+    ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 1 },
     starThresholds: [4500, 7200, 9600],
     build: buildLevel8
   },
@@ -701,7 +701,7 @@ export const LEVELS = [
     tierIndex: 3,
     skyTheme: 'golden',
     description: 'Trigger twin base explosives for a chain-reaction pyramid collapse!',
-    targetDestruction: 0.84,
+    targetDestruction: 0.92,
     ammo: { cannonball: 2, bomb: 2, cluster: 2, rocket: 2 },
     starThresholds: [4600, 7600, 10200],
     build: buildLevel9
@@ -726,7 +726,7 @@ export const LEVELS = [
     skyTheme: 'sunset',
     description: 'Three tall towers separated by volatile TNT canisters—ignite the gaps!',
     targetDestruction: 0.82,
-    ammo: { cannonball: 2, bomb: 3, cluster: 2, rocket: 2 },
+    ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 1 },
     starThresholds: [6200, 9800, 13200],
     build: buildLevel11
   },
@@ -738,7 +738,7 @@ export const LEVELS = [
     skyTheme: 'sunset',
     description: 'Knock the front monolith backward to tip the entire hall like giant dominoes!',
     targetDestruction: 0.82,
-    ammo: { cannonball: 2, bomb: 2, cluster: 2, rocket: 3 },
+    ammo: { cannonball: 1, bomb: 1, cluster: 1, rocket: 2 },
     starThresholds: [4800, 7800, 10500],
     build: buildLevel12
   },
@@ -750,7 +750,7 @@ export const LEVELS = [
     skyTheme: 'twilight',
     description: 'Armored steel pillars shield an explosive vault. Use Rockets or high-arc Bombs!',
     targetDestruction: 0.82,
-    ammo: { cannonball: 1, bomb: 3, cluster: 1, rocket: 3 },
+    ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 2 },
     starThresholds: [5400, 8600, 11600],
     build: buildLevel13
   },
@@ -762,7 +762,7 @@ export const LEVELS = [
     skyTheme: 'twilight',
     description: 'Six reinforced stories—target the recessed glass mid-layer and TNT cores!',
     targetDestruction: 0.82,
-    ammo: { cannonball: 1, bomb: 3, cluster: 2, rocket: 3 },
+    ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 2 },
     starThresholds: [6800, 10800, 14500],
     build: buildLevel14
   },
@@ -775,7 +775,7 @@ export const LEVELS = [
     skyTheme: 'twilight',
     description: 'The ultimate fortress! Breach the central reactor spire to obliterate both wings.',
     targetDestruction: 0.82,
-    ammo: { cannonball: 1, bomb: 4, cluster: 2, rocket: 4 },
+    ammo: { cannonball: 1, bomb: 2, cluster: 1, rocket: 2 },
     starThresholds: [9500, 14800, 19800],
     build: buildLevel15
   },
